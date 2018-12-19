@@ -1,7 +1,7 @@
 // Ball class
 export default class Ball extends Phaser.GameObjects.Sprite {
   // Init
-  constructor (scene, x, y, type) {
+  constructor (scene, x, y, waiting) {
     // Create sprite
     super(scene, x, y, '');
     scene.add.existing(this);
@@ -15,10 +15,28 @@ export default class Ball extends Phaser.GameObjects.Sprite {
     this.body.onCollide = true;
     
     // Size
-    this.type = type;
+    this.type = 0;
+    
+    // Waiting
+    this.waiting = waiting;
     
     // Select image
     super.setTexture(this.selectImage(this.type));
+    
+    // Move ball
+    scene.input.on('pointerdown', function(){
+      if (this.waiting) {
+        this.body.setVelocity(Phaser.Math.Between(-100, 100), -200);
+        this.waiting = false;
+      }
+    }, this);
+    
+    scene.input.keyboard.on('keydown_SPACE', function(){
+      if (this.waiting) {
+        this.body.setVelocity(Phaser.Math.Between(-100, 100), -200);
+        this.waiting = false;
+      }
+    }, this);
   }
   
   // Select image
@@ -38,6 +56,10 @@ export default class Ball extends Phaser.GameObjects.Sprite {
     //var oldVelocity2 = Math.pow(this.body.velocity.x, 2) + Math.pow(this.body.velocity.y, 2);
     this.body.setVelocityX(this.body.velocity.x + (this.x - x) * 3);
     //this.body.setVelocityY(Math.sqrt(oldVelocity2 - Math.pow(this.body.velocity.x, 2)) * -1);
-    //FlxG.play( sfx_bounce, 0.8, false);
+  }
+  
+  // Is waiting
+  isWaiting() {
+    return this.waiting;
   }
 }

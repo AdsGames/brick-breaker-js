@@ -23,6 +23,9 @@ export default class Bar extends Phaser.GameObjects.Sprite {
     scene.input.on('pointermove', function (pointer) {
       this.setPosition(pointer.x, this.y);
     }, this);
+    
+    // Keyboard controls
+    this.arrowKeys = scene.input.keyboard.createCursorKeys();
   }
   
   // Select image
@@ -62,5 +65,16 @@ export default class Bar extends Phaser.GameObjects.Sprite {
     }
     
     return 'img_bar';
+  }
+  
+  // Update
+  update() {
+    // Keyboard controls
+    if(this.arrowKeys.left.isDown) {
+      this.x -= 6;
+    }
+    else if(this.arrowKeys.right.isDown) {
+      this.x += 6;
+    }
   }
 }

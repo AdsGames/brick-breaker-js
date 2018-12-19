@@ -85,15 +85,6 @@ export default class GameState extends Phaser.Scene {
     
     var sfx_lava = this.sound.add('lava');
     sfx_lava.play();
-    
-    // Move ball
-    this.input.on('pointerdown', function(){
-      // Waiting? Move ball with bar
-      if (this.waiting && this.waitingBall) {
-        this.waitingBall.body.setVelocity(Phaser.Math.Between(-100, 100), -200);
-        this.waiting = false;
-      }
-    }, this);
   }
   
   // Change level
@@ -116,7 +107,7 @@ export default class GameState extends Phaser.Scene {
     this.balls.clear(true, true);
     
     // Create ball
-    this.waitingBall = this.createBall(550 / 2, 300);
+    this.waitingBall = this.createBall(550 / 2, 300, true);
     
     // Wait for input
     this.waiting = true;
@@ -181,7 +172,10 @@ export default class GameState extends Phaser.Scene {
   }
   
   // Update
-  update (time, delta) {
+  update() {
+    // Update bar, keyboard polling
+    this.bar.update();
+    
     // Lose game! (YOUUU LOSSEEEE *dannyvoice*(tm))
     if (this.lives <= 0) {
       this.sfx_music.stop();
@@ -194,10 +188,12 @@ export default class GameState extends Phaser.Scene {
       this.changeLevel();
     }
     
-    // Waiting? Move ball with bar
-    if (this.waiting && this.waitingBall) {
-      this.waitingBall.x = this.bar.x;
-    }
+    // Waiting ball? Move ball with bar    
+    this.balls.getChildren().forEach(child => {
+      if (child.isWaiting()) {
+        child.x = this.bar.x;
+      }
+    });
     
     // Display lives
     this.livesText.setText("LIVES:" + this.lives);
@@ -227,8 +223,8 @@ export default class GameState extends Phaser.Scene {
   }
   
   // Create ball
-  createBall(x, y) {
-    var newBall = new Ball(this, x, y);
+  createBall(x, y, waiting) {
+    var newBall = new Ball(this, x, y, waiting);
     this.balls.add(newBall);
     newBall.body.setCollideWorldBounds(true);
     newBall.body.setVelocity(0);
@@ -301,7 +297,7 @@ export default class GameState extends Phaser.Scene {
       case 2:
 				var tempBalls = this.balls.getChildren();
         tempBalls.forEach(child => {
-          var newBall = this.createBall(child.x, child.y);
+          var newBall = this.createBall(child.x, child.y, false);
           newBall.body.setVelocity(-child.body.velocity.x, child.body.velocity.y);
 				});
         this.sfx_multiball.play();
@@ -329,7 +325,7 @@ export default class GameState extends Phaser.Scene {
     
     // Make a new one
     if (this.balls.getLength() == 0) {
-      this.waitingBall = this.createBall(550 / 2, 300);
+      this.waitingBall = this.createBall(550 / 2, 300, true);
       this.waiting = true;
       
       // Lives down
