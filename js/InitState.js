@@ -7,8 +7,12 @@ export default class InitState extends Phaser.Scene {
   // Preload assets
   preload () {
     // Loading Screen
-    this.load.image('img_load', './assets/img/loading.png');
-    
+    this.load.baseURL = 
+        (window.location + '').replace(/[^\/]*$/g, '') +
+        document.querySelector('script[src$="js/Main.js"]')
+        .getAttribute('src')
+        .replace('js/Main.js',"");
+
     // Background
     this.add.image(550 / 2, 400 / 2, 'img_load');
     
@@ -50,55 +54,55 @@ export default class InitState extends Phaser.Scene {
     });*/
     
     // Lava
-    this.load.image('img_lava', './assets/img/lava.png');
-    this.load.spritesheet('img_lava_particle', './assets/img/lava_bubble.png', { frameWidth: 8, frameHeight: 8 });
+    this.load.image('img_lava', 'assets/img/lava.png');
+    this.load.spritesheet('img_lava_particle', 'assets/img/lava_bubble.png', { frameWidth: 8, frameHeight: 8 });
     
     // Buttons
-    this.load.image('img_button_play', './assets/img/button_play.png');
-    this.load.image('img_button_help', './assets/img/button_help.png');
-    this.load.image('img_button_back', './assets/img/button_back.png');
+    this.load.image('img_button_play', 'assets/img/button_play.png');
+    this.load.image('img_button_help', 'assets/img/button_help.png');
+    this.load.image('img_button_back', 'assets/img/button_back.png');
     
     // Background
-    this.load.image('img_background', './assets/img/back.png');
-    this.load.image('img_help', './assets/img/help.png');
+    this.load.image('img_background', 'assets/img/back.png');
+    this.load.image('img_help', 'assets/img/help.png');
     
     // Title
-    this.load.image('img_title', './assets/img/title.png');
+    this.load.image('img_title', 'assets/img/title.png');
     
     // Bricks
-    this.load.image('img_brick_blue', './assets/img/bricks/blue.png');
-    this.load.image('img_brick_brown', './assets/img/bricks/brown.png');
-    this.load.image('img_brick_red', './assets/img/bricks/red.png');
-    this.load.image('img_brick_yellow', './assets/img/bricks/yellow.png');
-    this.load.image('img_brick_white', './assets/img/bricks/white.png');
+    this.load.image('img_brick_blue', 'assets/img/bricks/blue.png');
+    this.load.image('img_brick_brown', 'assets/img/bricks/brown.png');
+    this.load.image('img_brick_red', 'assets/img/bricks/red.png');
+    this.load.image('img_brick_yellow', 'assets/img/bricks/yellow.png');
+    this.load.image('img_brick_white', 'assets/img/bricks/white.png');
     
     // Brick particles
-    this.load.spritesheet('img_particles_blue', './assets/img/bricks/particles_blue.png', { frameWidth: 20, frameHeight: 20 });
-    this.load.spritesheet('img_particles_brown', './assets/img/bricks/particles_brown.png', { frameWidth: 20, frameHeight: 20 });
-    this.load.spritesheet('img_particles_red', './assets/img/bricks/particles_red.png', { frameWidth: 20, frameHeight: 20 });
-    this.load.spritesheet('img_particles_yellow', './assets/img/bricks/particles_yellow.png', { frameWidth: 20, frameHeight: 20 });
-    this.load.spritesheet('img_particles_white', './assets/img/bricks/particles_white.png', { frameWidth: 20, frameHeight: 20 });
+    this.load.spritesheet('img_particles_blue', 'assets/img/bricks/particles_blue.png', { frameWidth: 20, frameHeight: 20 });
+    this.load.spritesheet('img_particles_brown', 'assets/img/bricks/particles_brown.png', { frameWidth: 20, frameHeight: 20 });
+    this.load.spritesheet('img_particles_red', 'assets/img/bricks/particles_red.png', { frameWidth: 20, frameHeight: 20 });
+    this.load.spritesheet('img_particles_yellow', 'assets/img/bricks/particles_yellow.png', { frameWidth: 20, frameHeight: 20 });
+    this.load.spritesheet('img_particles_white', 'assets/img/bricks/particles_white.png', { frameWidth: 20, frameHeight: 20 });
     
     // Info bar
-    this.load.image('img_info_bar', './assets/img/info_bar.png');
+    this.load.image('img_info_bar', 'assets/img/info_bar.png');
 		
     // Ball
-    this.load.image('img_ball_fire', './assets/img/ball_fire.png');
-    this.load.image('img_ball', './assets/img/ball.png');
+    this.load.image('img_ball_fire', 'assets/img/ball_fire.png');
+    this.load.image('img_ball', 'assets/img/ball.png');
     
     // Bar
-    this.load.image('img_bar', './assets/img/bar/bar.png');
-    this.load.image('img_bar_small', './assets/img/bar/bar_small.png');
-    this.load.image('img_bar_big', './assets/img/bar/bar_big.png');
+    this.load.image('img_bar', 'assets/img/bar/bar.png');
+    this.load.image('img_bar_small', 'assets/img/bar/bar_small.png');
+    this.load.image('img_bar_big', 'assets/img/bar/bar_big.png');
     
     // Powerups
-    this.load.image('img_powerup_ball_fast', './assets/img/powerup/ball_fast.png');
-    this.load.image('img_powerup_ball_fire', './assets/img/powerup/ball_fire.png');
-    this.load.image('img_powerup_ball_slow', './assets/img/powerup/ball_slow.png');
-    this.load.image('img_powerup_ball_multi', './assets/img/powerup/ball_multi.png');
-    this.load.image('img_powerup_bar_big', './assets/img/powerup/bar_big.png');
-    this.load.image('img_powerup_bar_small', './assets/img/powerup/bar_small.png');
-    this.load.image('img_powerup_ball_error', './assets/img/powerup/ball_error.png');
+    this.load.image('img_powerup_ball_fast', 'assets/img/powerup/ball_fast.png');
+    this.load.image('img_powerup_ball_fire', 'assets/img/powerup/ball_fire.png');
+    this.load.image('img_powerup_ball_slow', 'assets/img/powerup/ball_slow.png');
+    this.load.image('img_powerup_ball_multi', 'assets/img/powerup/ball_multi.png');
+    this.load.image('img_powerup_bar_big', 'assets/img/powerup/bar_big.png');
+    this.load.image('img_powerup_bar_small', 'assets/img/powerup/bar_small.png');
+    this.load.image('img_powerup_ball_error', 'assets/img/powerup/ball_error.png');
     
     // Music
     this.load.audio('music', 'assets/sfx/music.mp3');
