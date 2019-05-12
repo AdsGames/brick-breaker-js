@@ -40,8 +40,8 @@ export default class GameState extends Phaser.Scene {
     this.add.image(495, 20, 'img_info_bar');
     
     // Text
-    this.levelText = this.add.text(450, 12, 'level: ' + this.level, { fontSize: '16px', fill: '#000' });
-    this.livesText = this.add.text(10, 12, 'lives: ' + this.lives, { fontSize: '16px', fill: '#000' });
+    this.levelText = this.add.text(458, 12, 'level: ' + this.level, { fontSize: '16px', fill: '#000' });
+    this.livesText = this.add.text(18, 12, 'lives: ' + this.lives, { fontSize: '16px', fill: '#000' });
     
     // Lava
     this.lava = new Lava(this, 550 / 2, 400 - 10, 'img_lava', 'img_lava_particle');
@@ -205,21 +205,20 @@ export default class GameState extends Phaser.Scene {
   // Create explosion
   makeExplosion(x, y, width, height, rotation, speed, gravity, particle_img) {
     // Explosion emitter
-    var particles = this.add.particles(particle_img);
-    this.brick_emitter = particles.createEmitter();
-    this.brick_emitter.setSpeed(speed);
-    this.brick_emitter.setGravity(0, gravity);
-    this.brick_emitter.setScale(0.7);
-    this.brick_emitter.setLifespan( { min: 300, max: 1000 });
+    var brick_emitter = this.add.particles(particle_img).createEmitter();
+    brick_emitter.setFrame([ 0, 1, 2, 3], true);
+    brick_emitter.setSpeed(speed);
+    brick_emitter.setGravity(0, gravity);
+    brick_emitter.setScale(0.7);
+    brick_emitter.setLifespan( { min: 200, max: 600 });
     var emitZoneRect = {
       source: new Phaser.Geom.Rectangle(-width/2, -height/2, width, height),
       type: 'random',
       quantity: 1
     };
     
-    this.brick_emitter.setEmitZone(emitZoneRect);
-    
-    this.brick_emitter.explode(10, x, y);
+    brick_emitter.setEmitZone(emitZoneRect);
+    brick_emitter.explode(10, x, y);
   }
   
   // Create ball
@@ -238,23 +237,23 @@ export default class GameState extends Phaser.Scene {
     // Do unique stuff
     switch (brick.getType()) {
       case 0:
-        this.makeExplosion(brick.x, brick.y, brick.width, brick.height, 5, 50, 30, 'img_particles_blue');
+        this.makeExplosion(brick.x, brick.y, brick.width, brick.height, 5, 100, 80, 'img_particles_blue');
         break;
       case 1:
         this.sfx_dirt.play();
-        this.makeExplosion(brick.x, brick.y, brick.width, brick.height, 5, 10, 50, 'img_particles_brown');
+        this.makeExplosion(brick.x, brick.y, brick.width, brick.height, 5, 40, 50, 'img_particles_brown');
         break;
       case 2:
-        this.makeExplosion(brick.x, brick.y, brick.width, brick.height, 5, 10, 80, 'img_particles_red');
+        this.makeExplosion(brick.x, brick.y, brick.width, brick.height, 5, 80, 80, 'img_particles_red');
         var newBrick = new Brick(this, brick.x, brick.y, 0);	
         this.bricks.add(newBrick);
         break;
       case 3:
         this.sfx_explode.play();
-        this.makeExplosion(brick.x, brick.y, brick.width, brick.height, 5, 100, 50, 'img_particles_yellow');
+        this.makeExplosion(brick.x, brick.y, brick.width, brick.height, 5, 200, 50, 'img_particles_yellow');
         break;
       case 10:
-        this.makeExplosion(brick.x, brick.y, brick.width, brick.height, 5, 10, 70, 'img_particles_white');
+        this.makeExplosion(brick.x, brick.y, brick.width, brick.height, 5, 50, 70, 'img_particles_white');
         var newPowerup = new Powerup(this, brick.x, brick.y, Phaser.Math.Between(0, 4));	
         this.powerups.add(newPowerup);
         newPowerup.body.setVelocity(0, 60);
