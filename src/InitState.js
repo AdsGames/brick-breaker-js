@@ -9,9 +9,9 @@ export default class InitState extends Phaser.Scene {
     // Loading Screen
     this.load.baseURL = 
         (window.location + '').replace(/[^\/]*$/g, '') +
-        document.querySelector('script[src$="js/Main.js"]')
+        document.querySelector('script[src$="main.js"]')
         .getAttribute('src')
-        .replace('js/Main.js',"");
+        .replace('main.js',"");
 
     // Background
     this.add.image(550 / 2, 400 / 2, 'img_load');

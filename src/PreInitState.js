@@ -10,9 +10,9 @@ export default class PreInitState extends Phaser.Scene {
     // Loading Screen
     this.load.baseURL = 
         (window.location + '').replace(/[^\/]*$/g, '') +
-        document.querySelector('script[src$="js/Main.js"]')
+        document.querySelector('script[src$="main.js"]')
         .getAttribute('src')
-        .replace('js/Main.js',"");
+        .replace('main.js',"");
 
     this.load.image('img_load', 'assets/img/loading.png');
   }
