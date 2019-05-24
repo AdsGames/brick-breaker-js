@@ -85,6 +85,7 @@ export default class InitState extends Phaser.Scene {
     
     // Info bar
     this.load.image('img_info_bar', 'assets/img/info_bar.png');
+    this.load.image('img_game_over_panel', 'assets/img/game_over_panel.png');
 		
     // Ball
     this.load.image('img_ball_fire', 'assets/img/ball_fire.png');
@@ -102,7 +103,7 @@ export default class InitState extends Phaser.Scene {
     this.load.image('img_powerup_ball_multi', 'assets/img/powerup/ball_multi.png');
     this.load.image('img_powerup_bar_big', 'assets/img/powerup/bar_big.png');
     this.load.image('img_powerup_bar_small', 'assets/img/powerup/bar_small.png');
-    this.load.image('img_powerup_ball_error', 'assets/img/powerup/ball_error.png');
+    this.load.image('img_powerup_error', 'assets/img/powerup/error.png');
     
     // Music
     this.load.audio('music', 'assets/sfx/music.mp3');
