@@ -4,6 +4,7 @@ import HelpState from "./HelpState.js";
 import InitState from "./InitState.js";
 import GameState from "./GameState.js";
 import PreInitState from "./PreInitState.js";
+import GameOverState from "./GameOverState.js";
 
 // Create game
 window.addEventListener("load", function(event) {
@@ -13,7 +14,7 @@ window.addEventListener("load", function(event) {
     height: 400,
     backgroundColor: '#000',
     parent: "game-container",
-    scene: [ PreInitState, InitState, MenuState, GameState, HelpState ]
+    scene: [ PreInitState, InitState, MenuState, GameState, HelpState, GameOverState ]
 	};
 
   const game = new Phaser.Game(config);

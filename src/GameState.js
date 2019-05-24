@@ -179,7 +179,13 @@ export default class GameState extends Phaser.Scene {
     // Lose game! (YOUUU LOSSEEEE *dannyvoice*(tm))
     if (this.lives <= 0) {
       this.sfx_music.stop();
-      this.scene.start('MenuState');
+      this.scene.start(
+        'GameOverState', 
+        {
+          level: this.level, 
+          score: this.score
+        }
+      );
     }
     
     // Next level
@@ -264,6 +270,7 @@ export default class GameState extends Phaser.Scene {
     
     this.sfx_bounce.play();
     this.sfx_break.play();
+    this.score ++;
     
     // Remove brick
     this.bricks.remove(brick, true, true);
