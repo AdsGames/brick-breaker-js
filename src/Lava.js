@@ -1,41 +1,40 @@
-// Brick class
+import Phaser from "phaser";
+
 export default class Lava extends Phaser.GameObjects.Sprite {
-  // Init
-  constructor (scene, x, y, lava_image, lava_particle) {
+  constructor(scene, x, y, lavaImage, lavaParticle) {
     // Lava
-    super(scene, x, y, lava_image);
+    super(scene, x, y, lavaImage);
     scene.add.existing(this);
-    
+
     // Physics
     if (scene.physics) {
       scene.physics.world.enable(this);
-      
+
       this.body.setImmovable(true);
       this.body.setSize(scene.width, 10);
       this.body.setOffset(0, 10);
       this.body.onCollide = true;
     }
-    
+
     // Lava particles
-    var particles = scene.add.particles(lava_particle);
-    this.lava_emitter = particles.createEmitter();
-    
-    this.lava_emitter.setSpeed({ min: 50, max: 100 });
-    this.lava_emitter.setGravity(0, 200);
-    this.lava_emitter.setScale({ start: 1, end: 0.2 });
-    this.lava_emitter.setAngle({ min: 230, max: 310 });
-    
-    this.lava_emitter.setLifespan({ min: 100, max: 500 });
-    this.lava_emitter.setFrequency(100);
-    this.lava_emitter.setPosition(0, 380);
-    
-    var emitZoneRect = {
+    const particles = scene.add.particles(lavaParticle);
+    this.lavaEmitter = particles.createEmitter();
+
+    this.lavaEmitter.setSpeed({ max: 100, min: 50 });
+    this.lavaEmitter.setGravity(0, 200);
+    this.lavaEmitter.setScale({ end: 0.2, start: 1 });
+    this.lavaEmitter.setAngle({ max: 310, min: 230 });
+
+    this.lavaEmitter.setLifespan({ max: 500, min: 100 });
+    this.lavaEmitter.setFrequency(100);
+    this.lavaEmitter.setPosition(0, 380);
+
+    const emitZoneRect = {
+      quantity: 1,
       source: new Phaser.Geom.Rectangle(0, 0, 550, 1),
-      type: 'random',
-      quantity: 1
+      type: "random",
     };
-    
-    this.lava_emitter.setEmitZone(emitZoneRect);
-    
+
+    this.lavaEmitter.setEmitZone(emitZoneRect);
   }
 }
