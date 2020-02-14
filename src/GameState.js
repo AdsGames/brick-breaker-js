@@ -114,11 +114,11 @@ export default class GameState extends Phaser.Scene {
     if (this.level <= 10) {
       if (this.level < 9) this.levelHeight = this.level + 1;
 
-      this.lava.lava_emitter.setSpeed({
+      this.lava.lavaEmitter.setSpeed({
         max: 100 + this.level * 10,
         min: 50 + this.level * 10,
       });
-      this.lava.lava_emitter.setLifespan({
+      this.lava.lavaEmitter.setLifespan({
         max: 500 + this.level * 50,
         min: 100 + this.level * 30,
       });
