@@ -9,15 +9,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ADSGames/BrickBreakerJS.git"
+    "url": "git+https://github.com/AdsGames/BrickBreakerJS.git"
   },
   "author": "Allan Legemaate",
   "license": "MIT",
   "licenseUrl": "http://www.opensource.org/licenses/mit-license.php",
   "bugs": {
-    "url": "https://github.com/ADSGames/BrickBreakerJS/issues"
+    "url": "https://github.com/AdsGames/BrickBreakerJS/issues"
   },
-  "homepage": "https://github.com/ADSGames/BrickBreakerJS#readme",
+  "homepage": "https://github.com/AdsGames/BrickBreakerJS#readme",
   "devDependencies": {
     "@babel/core": "^7.2.2",
     "@babel/preset-env": "^7.2.3",
