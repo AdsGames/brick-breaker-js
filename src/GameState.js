@@ -1,145 +1,175 @@
-// Imports
+/* eslint-disable max-lines */
+import Phaser from "phaser";
+
 import Brick from "./Brick.js";
 import Lava from "./Lava.js";
 import Bar from "./Bar.js";
 import Ball from "./Ball.js";
 import Powerup from "./Powerup.js";
 
-// State
 export default class GameState extends Phaser.Scene {
-  // Init
-  constructor () {
-    super({ 
-      key: 'GameState', 
+  constructor() {
+    super({
       active: false,
+      key: "GameState",
       physics: {
-        default: 'arcade',
         arcade: {
           debug: false,
-          gravity: { y: 0 }
-        }
-      }
+          gravity: { y: 0 },
+        },
+        default: "arcade",
+      },
     });
   }
-  
-  // Create
-  create () {
+
+  create() {
     // Game state variables
     this.lives = 3;
     this.level = 1;
     this.score = 0;
-    
-    this.level_width = 8;
-    this.level_height = 2;
-    
+    this.levelWidth = 8;
+    this.levelHeight = 2;
+
+    this.initUi();
+    this.initGameObjects();
+    this.initAudio();
+
+    this.changeLevel();
+  }
+
+  initUi() {
     // Background
-    this.add.image(550 / 2, 400 / 2, 'img_background');
-    
+    this.add.image(550 / 2, 400 / 2, "img_background");
+
     // Info bar
-    this.add.image(55, 20, 'img_info_bar');
-    this.add.image(495, 20, 'img_info_bar');
-    
+    this.add.image(55, 20, "img_info_bar");
+    this.add.image(495, 20, "img_info_bar");
+
     // Text
-    this.levelText = this.add.text(458, 12, 'level: ' + this.level, { fontSize: '16px', fill: '#000' });
-    this.livesText = this.add.text(18, 12, 'lives: ' + this.lives, { fontSize: '16px', fill: '#000' });
-    
+    this.levelText = this.add.text(458, 12, `level: ${this.level}`, {
+      fill: "#000",
+      fontSize: "16px",
+    });
+    this.livesText = this.add.text(18, 12, `lives: ${this.lives}`, {
+      fill: "#000",
+      fontSize: "16px",
+    });
+  }
+
+  initGameObjects() {
     // Lava
-    this.lava = new Lava(this, 550 / 2, 400 - 10, 'img_lava', 'img_lava_particle');
-    
+    this.lava = new Lava(
+      this,
+      550 / 2,
+      400 - 10,
+      "img_lava",
+      "img_lava_particle"
+    );
+
     // Bricks group
-    this.bricks = new Phaser.Physics.Arcade.StaticGroup(this.physics.world, this);
-    
+    this.bricks = new Phaser.Physics.Arcade.StaticGroup(
+      this.physics.world,
+      this
+    );
+
     // Balls group
     this.balls = new Phaser.Physics.Arcade.Group(this.physics.world, this);
-    
+
     // Powerups group
     this.powerups = new Phaser.Physics.Arcade.Group(this.physics.world, this);
-    
+
     // Create bar
     this.bar = new Bar(this, 550 / 2, 340, 1);
-    
+
     // New ball waiting
     this.waitingBall = null;
-    
+
     // Waiting
     this.waiting = true;
-    
-    // Change level
-    this.changeLevel();
-    
-    // Audio
-    this.sfx_speed_up = this.sound.add('speed_up');
-    this.sfx_slow_down = this.sound.add('slow_down');
-    this.sfx_smaller = this.sound.add('smaller');
-    this.sfx_multiball = this.sound.add('multiball');
-    
-    this.sfx_bigger = this.sound.add('bigger');
-    this.sfx_bounce = this.sound.add('bounce');
-    this.sfx_break = this.sound.add('break');
-    this.sfx_dirt = this.sound.add('dirt');
-    this.sfx_explode = this.sound.add('explode');
-    
-    this.sfx_music = this.sound.add('music');
-    this.sfx_music.setLoop(true);
-    this.sfx_music.play();
-    
-    var sfx_lava = this.sound.add('lava');
-    sfx_lava.play();
   }
-  
-  // Change level
+
+  initAudio() {
+    // Audio
+    this.sfxSpeedUp = this.sound.add("speed_up");
+    this.sfxSlowDown = this.sound.add("slow_down");
+    this.sfxSmaller = this.sound.add("smaller");
+    this.sfxMultiball = this.sound.add("multiball");
+
+    this.sfxBigger = this.sound.add("bigger");
+    this.sfxBounce = this.sound.add("bounce");
+    this.sfxBreak = this.sound.add("break");
+    this.sfxDirt = this.sound.add("dirt");
+    this.sfxExplode = this.sound.add("explode");
+
+    this.sfxMusic = this.sound.add("music");
+    this.sfxMusic.setLoop(true);
+    this.sfxMusic.play();
+
+    const sfxLava = this.sound.add("lava");
+    sfxLava.play();
+  }
+
   changeLevel() {
     // Intensify!
-    if (this.level <= 10){
-      //balls.members[0].setLevel( level);
-      
-      if (this.level < 9)
-        this.level_height = this.level + 1;
-      
-      this.lava.lava_emitter.setSpeed({ min: 50 + this.level * 10, max: 100 + this.level * 10 });
-      this.lava.lava_emitter.setLifespan({ min: 100 + this.level * 30, max: 500 + this.level * 50 });
+    if (this.level <= 10) {
+      if (this.level < 9) this.levelHeight = this.level + 1;
+
+      this.lava.lavaEmitter.setSpeed({
+        max: 100 + this.level * 10,
+        min: 50 + this.level * 10,
+      });
+      this.lava.lavaEmitter.setLifespan({
+        max: 500 + this.level * 50,
+        min: 100 + this.level * 30,
+      });
     }
-    
+
     // Bar
     this.bar.setSize(0);
-    
+
     // Balls
     this.balls.clear(true, true);
-    
+
     // Create ball
     this.waitingBall = this.createBall(550 / 2, 300, true);
-    
+
     // Wait for input
     this.waiting = true;
-    
+
     // Bricks
     this.bricks.clear(true, true);
-    
+
     // Make bricks
-    this.makeBricks(this.level_width, this.level_height);
-    
+    this.makeBricks(this.levelWidth, this.levelHeight);
+
     // Powerups
     this.powerups.clear(true, true);
-    
+
     // Add colliders
-    this.physics.add.collider(this.bricks, this.balls, this.collideBrickBall, null, this);
-    this.physics.add.collider(this.balls, this.bar, this.collideBallBar, null, this);
-    this.physics.add.collider(this.powerups, this.bar, this.collidePowerupBar, null, this);
-    this.physics.add.collider(this.balls, this.lava, this.collideBallLava, null, this);
-    this.physics.add.collider(this.powerups, this.lava, this.collidePowerupLava, null, this);
+    this.createCollider(this.bricks, this.balls, this.collideBrickBall);
+    this.createCollider(this.balls, this.bar, this.collideBallBar);
+    this.createCollider(this.powerups, this.bar, this.collidePowerupBar);
+    this.createCollider(this.balls, this.lava, this.collideBallLava);
+    this.createCollider(this.powerups, this.lava, this.collidePowerupLava);
   }
-  
-  // Make bricks
+
+  createCollider(group1, group2, collider) {
+    this.physics.add.collider(group1, group2, collider, null, this);
+  }
+
   makeBricks(newWidth, newHeight) {
     // Create asked amount
-    for (var i = 0; i < newWidth; i++) {
-      for (var t = 0; t < newHeight; t++) {
-        var brickType = Phaser.Math.Between(0, ((this.level - 1)%5) + 1);
-        var brickTypeSpecial = Phaser.Math.Between(0, 10);
-        
-        var newBrick = null;
-        
-        if (brickTypeSpecial != 1) {
+    for (let i = 0; i < newWidth; i += 1) {
+      for (let t = 0; t < newHeight; t += 1) {
+        let brickType = Phaser.Math.Between(0, ((this.level - 1) % 5) + 1);
+        const brickTypeSpecial = Phaser.Math.Between(0, 10);
+
+        let newBrick = null;
+
+        if (brickTypeSpecial === 1) {
+          brickType = 10;
+          newBrick = new Brick(this, 0, 0, brickType);
+        } else {
           switch (brickType) {
             case 0:
               newBrick = new Brick(this, 0, 0, brickType);
@@ -157,189 +187,195 @@ export default class GameState extends Phaser.Scene {
               break;
           }
         }
-        else {
-          brickType = 10;
-          newBrick = new Brick(this, 0, 0, brickType);	
-        }
-          
-        if (brickType < 4 || brickTypeSpecial == 1) {
-          newBrick.x = 45 + (i * 64);
-          newBrick.y = 70 + (t * 24);
+
+        if (brickType < 4 || brickTypeSpecial === 1) {
+          newBrick.x = 45 + i * 64;
+          newBrick.y = 70 + t * 24;
           this.bricks.add(newBrick);
         }
       }
     }
   }
-  
-  // Update
+
   update() {
     // Update bar, keyboard polling
     this.bar.update();
-    
+
     // Lose game! (YOUUU LOSSEEEE *dannyvoice*(tm))
     if (this.lives <= 0) {
-      this.sfx_music.stop();
-      this.scene.start(
-        'GameOverState', 
-        {
-          level: this.level, 
-          score: this.score
-        }
-      );
+      this.sfxMusic.stop();
+      this.scene.start("GameOverState", {
+        level: this.level,
+        score: this.score,
+      });
     }
-    
+
     // Next level
     if (this.bricks.getLength() <= 0) {
       this.level += 1;
       this.changeLevel();
     }
-    
-    // Waiting ball? Move ball with bar    
+
+    // Waiting ball? Move ball with bar
     this.balls.getChildren().forEach(child => {
       if (child.isWaiting()) {
         child.x = this.bar.x;
       }
     });
-    
+
     // Display lives
-    this.livesText.setText("LIVES:" + this.lives);
-    
+    this.livesText.setText(`LIVES: ${this.lives}`);
+
     // Display current level
-    this.levelText.setText("LEVEL:" + this.level);
+    this.levelText.setText(`LEVEL: ${this.level}`);
   }
-  
-  // Create explosion
-  makeExplosion(x, y, width, height, rotation, speed, gravity, particle_img) {
+
+  makeExplosion(x, y, width, height, rotation, speed, gravity, particleImage) {
     // Explosion emitter
-    var brick_emitter = this.add.particles(particle_img).createEmitter();
-    brick_emitter.setFrame([ 0, 1, 2, 3], true);
-    brick_emitter.setSpeed(speed);
-    brick_emitter.setGravity(0, gravity);
-    brick_emitter.setScale(0.7);
-    brick_emitter.setLifespan( { min: 200, max: 600 });
-    var emitZoneRect = {
-      source: new Phaser.Geom.Rectangle(-width/2, -height/2, width, height),
-      type: 'random',
-      quantity: 1
+    const brickEmitter = this.add.particles(particleImage).createEmitter();
+    brickEmitter.setFrame([0, 1, 2, 3], true);
+    brickEmitter.setSpeed(speed);
+    brickEmitter.setGravity(0, gravity);
+    brickEmitter.setScale(0.7);
+    brickEmitter.setLifespan({ max: 600, min: 200 });
+
+    const emitZoneRect = {
+      quantity: 1,
+      source: new Phaser.Geom.Rectangle(-width / 2, -height / 2, width, height),
+      type: "random",
     };
-    
-    brick_emitter.setEmitZone(emitZoneRect);
-    brick_emitter.explode(10, x, y);
+
+    brickEmitter.setEmitZone(emitZoneRect);
+    brickEmitter.explode(10, x, y);
   }
-  
-  // Create ball
+
   createBall(x, y, waiting) {
-    var newBall = new Ball(this, x, y, waiting);
+    const newBall = new Ball(this, x, y, waiting);
     this.balls.add(newBall);
     newBall.body.setCollideWorldBounds(true);
     newBall.body.setVelocity(0);
     newBall.body.bounce.setTo(1, 1);
     return newBall;
   }
-  
-  // Colliders
-  // Brick with bar
-  collideBrickBall(brick, ball) {
-    // Do unique stuff
+
+  collideBrickBall(brick) {
+    const { x, y, width, height } = brick;
+
+    const particles = {
+      blue: "img_particles_blue",
+      brown: "img_particles_brown",
+      red: "img_particles_red",
+      white: "img_particles_white",
+      yellow: "img_particles_yellow",
+    };
+
     switch (brick.getType()) {
       case 0:
-        this.makeExplosion(brick.x, brick.y, brick.width, brick.height, 5, 100, 80, 'img_particles_blue');
+        this.makeExplosion(x, y, width, height, 5, 100, 80, particles.blue);
         break;
       case 1:
-        this.sfx_dirt.play();
-        this.makeExplosion(brick.x, brick.y, brick.width, brick.height, 5, 40, 50, 'img_particles_brown');
+        this.sfxDirt.play();
+        this.makeExplosion(x, y, width, height, 5, 40, 50, particles.brown);
         break;
       case 2:
-        this.makeExplosion(brick.x, brick.y, brick.width, brick.height, 5, 80, 80, 'img_particles_red');
-        var newBrick = new Brick(this, brick.x, brick.y, 0);	
-        this.bricks.add(newBrick);
+        this.makeExplosion(x, y, width, height, 5, 80, 80, particles.red);
+        this.bricks.add(new Brick(this, x, y, 0));
         break;
       case 3:
-        this.sfx_explode.play();
-        this.makeExplosion(brick.x, brick.y, brick.width, brick.height, 5, 200, 50, 'img_particles_yellow');
+        this.sfxExplode.play();
+        this.makeExplosion(x, y, width, height, 5, 200, 50, particles.yellow);
         break;
       case 10:
-        this.makeExplosion(brick.x, brick.y, brick.width, brick.height, 5, 50, 70, 'img_particles_white');
-        var newPowerup = new Powerup(this, brick.x, brick.y, Phaser.Math.Between(0, 4));	
-        this.powerups.add(newPowerup);
-        newPowerup.body.setVelocity(0, 60);
+        this.makeExplosion(x, y, width, height, 5, 50, 70, particles.white);
+        this.createPowerup(x, y, Phaser.Math.Between(0, 4), 0, 60);
         break;
       default:
-        console.log("Invalid brick id!");
+        throw Error("Invalid brick id!");
     }
-    
-    this.sfx_bounce.play();
-    this.sfx_break.play();
-    this.score ++;
-    
+
+    this.sfxBounce.play();
+    this.sfxBreak.play();
+    this.score += 1;
+
     // Remove brick
     this.bricks.remove(brick, true, true);
   }
-  
-  // Ball with bar
+
+  createPowerup(x, y, type, velocityX, velocityY) {
+    const newPowerup = new Powerup(this, x, y, type);
+    this.powerups.add(newPowerup);
+    newPowerup.body.setVelocity(velocityX, velocityY);
+  }
+
   collideBallBar(bar, ball) {
-    this.sfx_bounce.play();
+    this.sfxBounce.play();
     ball.hitBar(bar.x);
   }
-  
-  // Powerup with bar
+
   collidePowerupBar(bar, powerup) {
-    // Do unique stuff
     switch (powerup.getType()) {
       case 0:
-        var tempBalls = this.balls.getChildren();
-        tempBalls.forEach(child => {
-          child.body.setVelocity(child.body.velocity.x * 0.8, child.body.velocity.y * 0.8);
-				});
-				this.sfx_slow_down.play();
+        this.balls.getChildren().forEach(child => {
+          child.body.setVelocity(
+            child.body.velocity.x * 0.8,
+            child.body.velocity.y * 0.8
+          );
+        });
+        this.sfxSlowDown.play();
         break;
       case 1:
-        var tempBalls = this.balls.getChildren();
-        tempBalls.forEach(child => {
-          child.body.setVelocity(child.body.velocity.x * 1.2, child.body.velocity.y * 1.2);
-				});
-				this.sfx_speed_up.play();
+        this.balls.getChildren().forEach(child => {
+          child.body.setVelocity(
+            child.body.velocity.x * 1.2,
+            child.body.velocity.y * 1.2
+          );
+        });
+        this.sfxSpeedUp.play();
         break;
       case 2:
-				var tempBalls = this.balls.getChildren();
-        tempBalls.forEach(child => {
-          var newBall = this.createBall(child.x, child.y, false);
-          newBall.body.setVelocity(-child.body.velocity.x, child.body.velocity.y);
-				});
-        this.sfx_multiball.play();
+        this.balls.getChildren().forEach(child => {
+          const newBall = this.createBall(child.x, child.y, false);
+          newBall.body.setVelocity(
+            -child.body.velocity.x,
+            child.body.velocity.y
+          );
+        });
+        this.sfxMultiball.play();
         break;
       case 3:
         bar.setSize(1);
-				this.sfx_bigger.play();
+        this.sfxBigger.play();
         break;
       case 4:
         bar.setSize(-1);
-				this.sfx_smaller.play();
+        this.sfxSmaller.play();
         break;
       default:
-        console.log("Invalid powerup id!");
+        throw new Error("Invalid powerup id");
     }
-    
+
     // Remove powerup
     this.powerups.remove(powerup, true, true);
   }
-  
-  // Ball lava
+
   collideBallLava(lava, ball) {
-    // Remove powerup
+    // Remove ball
     this.balls.remove(ball, true, true);
-    
+
     // Make a new one
-    if (this.balls.getLength() == 0) {
+    if (this.balls.getLength() === 0) {
       this.waitingBall = this.createBall(550 / 2, 300, true);
       this.waiting = true;
-      
+
       // Lives down
-      this.lives -= 1;
+      this.removeLife();
     }
   }
-  
-  // Powerup lava
+
+  removeLife() {
+    this.lives -= 1;
+  }
+
   collidePowerupLava(lava, powerup) {
     // Remove powerup
     this.powerups.remove(powerup, true, true);
