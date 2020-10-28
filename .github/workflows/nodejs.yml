@@ -18,14 +18,8 @@ jobs:
       - name: Install dependencies
         run: yarn --frozen-lockfile
 
+      - name: Lint project
+        run: yarn lint
+
       - name: Build project
         run: yarn build
-
-      - name: Zip build
-        run: cd dist && ls && zip -r ./build.zip *
-
-      - name: Persist build.zip
-        uses: actions/upload-artifact@v1
-        with:
-          name: build-zip
-          path: "./dist/build.zip"
