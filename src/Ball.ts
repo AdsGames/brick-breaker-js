@@ -1,10 +1,16 @@
 import * as Phaser from "phaser";
 
 export default class Ball extends Phaser.Physics.Arcade.Sprite {
-  public ballType: number = 0;
-
+  // If ball is waiting or not
   private waiting: boolean = false;
 
+  /**
+   * Constructor
+   * @param scene Scene to attach to
+   * @param x X position to create at
+   * @param y Y Position to create at
+   * @param waiting If ball should start in waiting state
+   */
   public constructor(
     scene: Phaser.Scene,
     x: number,
@@ -27,12 +33,17 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
     this.waiting = waiting;
 
     // Select image
-    super.setTexture(this.selectImage(this.ballType));
+    super.setTexture("img_ball");
 
-    // Setup inputs
-    this.setupInput(scene);
+    // Setup launch ball
+    scene.input.on("pointerdown", this.launchBall.bind(this), this);
+    scene.input.keyboard.on("keydown_SPACE", this.launchBall.bind(this), this);
   }
 
+  /**
+   * Collide with bar handler
+   * @param x position hit at
+   */
   public hitBar(x: number): void {
     const { body } = this;
 
@@ -43,49 +54,27 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
     body.setVelocityX(this.body.velocity.x + (this.x - x) * 3);
   }
 
+  /**
+   * Is waiting
+   * @retuns waiting state
+   */
   public isWaiting(): boolean {
     return this.waiting;
   }
 
-  private selectImage(type: number): string {
-    switch (type) {
-      case 0:
-        return "img_ball";
-      case 1:
-        return "img_ball_fire";
-      default:
-        return "img_ball";
-    }
-  }
-
-  private setupInput(scene: Phaser.Scene): void {
-    const { body } = this;
-
-    if (body instanceof Phaser.Physics.Arcade.StaticBody) {
+  /**
+   * Launch ball
+   * @description Launches ball if in waiting state
+   */
+  private launchBall(): void {
+    if (
+      this.body instanceof Phaser.Physics.Arcade.StaticBody ||
+      !this.waiting
+    ) {
       return;
     }
 
-    // Move ball
-    scene.input.on(
-      "pointerdown",
-      () => {
-        if (this.waiting) {
-          body.setVelocity(Phaser.Math.Between(-100, 100), -200);
-          this.waiting = false;
-        }
-      },
-      this
-    );
-
-    scene.input.keyboard.on(
-      "keydown_SPACE",
-      () => {
-        if (this.waiting) {
-          body.setVelocity(Phaser.Math.Between(-100, 100), -200);
-          this.waiting = false;
-        }
-      },
-      this
-    );
+    this.body.setVelocity(Phaser.Math.Between(-100, 100), -200);
+    this.waiting = false;
   }
 }

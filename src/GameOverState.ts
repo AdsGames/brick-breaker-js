@@ -4,11 +4,16 @@ import Lava from "./Lava";
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   active: false,
   key: "GameOverState",
+  physics: {
+    arcade: {
+      debug: false,
+      gravity: { y: 0 },
+    },
+    default: "arcade",
+  },
 };
 
 export default class GameOverState extends Phaser.Scene {
-  public lava!: Lava;
-
   private score: number = 0;
 
   private level: number = 0;
@@ -27,13 +32,7 @@ export default class GameOverState extends Phaser.Scene {
     this.add.image(550 / 2, 400 / 2, "img_background");
 
     // Lava
-    this.lava = new Lava(
-      this,
-      550 / 2,
-      400 - 10,
-      "img_lava",
-      "img_lava_particle"
-    );
+    this.add.existing(new Lava(this, 550 / 2, 400 - 10));
 
     // Text
     this.add

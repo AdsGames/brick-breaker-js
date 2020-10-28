@@ -1,11 +1,31 @@
 import * as Phaser from "phaser";
 
+const MOVEMENT_SPEED = 6;
+
+type BarSize = 0 | 1 | 2;
+
+// Map type to image
+const BAR_IMAGES: Record<BarSize, string> = {
+  0: "img_bar_small",
+  1: "img_bar",
+  2: "img_bar_big",
+};
+
 export default class Bar extends Phaser.Physics.Arcade.Sprite {
-  public size: number = 0;
+  // Size of bar
+  private size: BarSize = 0;
 
-  public arrowKeys!: Phaser.Types.Input.Keyboard.CursorKeys;
+  // Arrow keys of scene
+  private readonly arrowKeys!: Phaser.Types.Input.Keyboard.CursorKeys;
 
-  public constructor(scene: Phaser.Scene, x: number, y: number, size: number) {
+  /**
+   * Constructor
+   * @param scene Scene to attach to
+   * @param x X position to create at
+   * @param y Y Position to create at
+   * @param size Size of bar
+   */
+  public constructor(scene: Phaser.Scene, x: number, y: number, size: BarSize) {
     // Create sprite
     super(scene, x, y, "");
     scene.add.existing(this);
@@ -40,12 +60,17 @@ export default class Bar extends Phaser.Physics.Arcade.Sprite {
     this.arrowKeys = scene.input.keyboard.createCursorKeys();
   }
 
-  public setBarSize(size: number): void {
+  /**
+   * Set Bar Size
+   * @description Sets up body and image of bar on resize
+   * @param size Size of bar
+   */
+  public setBarSize(size: -1 | 0 | 1): void {
     // Change size
     if (this.size + size > -1 && this.size + size < 3) this.size += size;
 
     // Get image
-    super.setTexture(this.selectImage(this.size));
+    super.setTexture(BAR_IMAGES[this.size]);
 
     // Set body size
     switch (this.size) {
@@ -64,25 +89,16 @@ export default class Bar extends Phaser.Physics.Arcade.Sprite {
     }
   }
 
+  /**
+   * Update
+   * @description Update bar movement
+   */
   public update(): void {
     // Keyboard controls
     if (this.arrowKeys.left?.isDown ?? false) {
-      this.x -= 6;
+      this.x -= MOVEMENT_SPEED;
     } else if (this.arrowKeys.right?.isDown ?? false) {
-      this.x += 6;
-    }
-  }
-
-  private selectImage(size: number): string {
-    switch (size) {
-      case 0:
-        return "img_bar_small";
-      case 1:
-        return "img_bar";
-      case 2:
-        return "img_bar_big";
-      default:
-        return "img_bar";
+      this.x += MOVEMENT_SPEED;
     }
   }
 }

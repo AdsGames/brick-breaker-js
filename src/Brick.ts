@@ -1,9 +1,33 @@
 import * as Phaser from "phaser";
 
-export default class Brick extends Phaser.Physics.Arcade.Sprite {
-  public brickType: number = 0;
+export type BrickType = "blue" | "brown" | "red" | "yellow" | "white";
 
-  public constructor(scene: Phaser.Scene, x: number, y: number, type: number) {
+// Map type to image
+const BRICK_IMAGES: Record<BrickType, string> = {
+  blue: "img_brick_blue",
+  brown: "img_brick_brown",
+  red: "img_brick_red",
+  white: "img_brick_white",
+  yellow: "img_brick_yellow",
+};
+
+export default class Brick extends Phaser.Physics.Arcade.Sprite {
+  // Type of brick
+  private readonly brickType: BrickType;
+
+  /**
+   * Constructor
+   * @param scene Scene to attach to
+   * @param x X position to create at
+   * @param y Y Position to create at
+   * @param type Brick type
+   */
+  public constructor(
+    scene: Phaser.Scene,
+    x: number,
+    y: number,
+    type: BrickType
+  ) {
     // Create sprite
     super(scene, x, y, "");
     scene.add.existing(this);
@@ -22,27 +46,10 @@ export default class Brick extends Phaser.Physics.Arcade.Sprite {
 
     // Select texture
     this.brickType = type;
-    super.setTexture(this.selectImage(this.brickType));
+    super.setTexture(BRICK_IMAGES[this.brickType]);
   }
 
-  public getBrickType(): number {
+  public getBrickType(): BrickType {
     return this.brickType;
-  }
-
-  private selectImage(type: number): string {
-    switch (type) {
-      case 0:
-        return "img_brick_blue";
-      case 1:
-        return "img_brick_brown";
-      case 2:
-        return "img_brick_red";
-      case 3:
-        return "img_brick_yellow";
-      case 10:
-        return "img_brick_white";
-      default:
-        return "img_brick_blue";
-    }
   }
 }

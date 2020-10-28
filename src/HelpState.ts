@@ -4,11 +4,16 @@ import Lava from "./Lava";
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   active: false,
   key: "HelpState",
+  physics: {
+    arcade: {
+      debug: false,
+      gravity: { y: 0 },
+    },
+    default: "arcade",
+  },
 };
 
 export default class HelpState extends Phaser.Scene {
-  public lava!: Lava;
-
   public constructor() {
     super(sceneConfig);
   }
@@ -18,13 +23,7 @@ export default class HelpState extends Phaser.Scene {
     this.add.image(550 / 2, 400 / 2, "img_background");
 
     // Lava
-    this.lava = new Lava(
-      this,
-      550 / 2,
-      400 - 10,
-      "img_lava",
-      "img_lava_particle"
-    );
+    this.add.existing(new Lava(this, 550 / 2, 400 - 10));
 
     // Help page
     this.add.image(550 / 2, 190, "img_help");

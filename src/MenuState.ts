@@ -14,8 +14,6 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
 };
 
 export default class MenuState extends Phaser.Scene {
-  public lava!: Lava;
-
   public constructor() {
     super(sceneConfig);
   }
@@ -38,12 +36,6 @@ export default class MenuState extends Phaser.Scene {
     buttonHelp.on("pointerdown", () => this.scene.start("HelpState"), this);
 
     // Lava
-    this.lava = new Lava(
-      this,
-      550 / 2,
-      400 - 10,
-      "img_lava",
-      "img_lava_particle"
-    );
+    this.add.existing(new Lava(this, 550 / 2, 400 - 10));
   }
 }

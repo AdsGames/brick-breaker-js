@@ -1,11 +1,19 @@
 /* eslint-disable max-lines */
 import * as Phaser from "phaser";
 
+import type { BrickType } from "./Brick";
 import Brick from "./Brick";
 import Lava from "./Lava";
 import Bar from "./Bar";
 import Ball from "./Ball";
+import type { PowerupType } from "./Powerup";
 import Powerup from "./Powerup";
+
+const randomPowerupType = (): PowerupType => {
+  const powerupTypes = ["slow", "fast", "multi", "big", "small"] as const;
+  const powerupType = Phaser.Math.Between(0, powerupTypes.length - 1);
+  return powerupTypes[powerupType];
+};
 
 const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   active: false,
@@ -43,10 +51,6 @@ export default class GameState extends Phaser.Scene {
   private powerups!: Phaser.Physics.Arcade.Group;
 
   private bar!: Bar;
-
-  private waitingBall: Phaser.GameObjects.GameObject | null = null;
-
-  private waiting: boolean = false;
 
   private sfxSpeedUp!: Phaser.Sound.BaseSound;
 
@@ -100,13 +104,8 @@ export default class GameState extends Phaser.Scene {
 
   public initGameObjects(): void {
     // Lava
-    this.lava = new Lava(
-      this,
-      550 / 2,
-      400 - 10,
-      "img_lava",
-      "img_lava_particle"
-    );
+    this.lava = new Lava(this, 550 / 2, 400 - 10);
+    this.add.existing(this.lava);
 
     // Bricks group
     this.bricks = new Phaser.Physics.Arcade.StaticGroup(
@@ -122,12 +121,6 @@ export default class GameState extends Phaser.Scene {
 
     // Create bar
     this.bar = new Bar(this, 550 / 2, 340, 1);
-
-    // New ball waiting
-    this.waitingBall = null;
-
-    // Waiting
-    this.waiting = true;
   }
 
   public initAudio(): void {
@@ -175,10 +168,7 @@ export default class GameState extends Phaser.Scene {
     this.balls.clear(true, true);
 
     // Create ball
-    this.waitingBall = this.createBall(550 / 2, 300, true);
-
-    // Wait for input
-    this.waiting = true;
+    this.createBall(550 / 2, 300, true);
 
     // Bricks
     this.bricks.clear(true, true);
@@ -229,34 +219,22 @@ export default class GameState extends Phaser.Scene {
     // Create asked amount
     for (let i = 0; i < newWidth; i += 1) {
       for (let t = 0; t < newHeight; t += 1) {
-        let brickType = Phaser.Math.Between(0, ((this.level - 1) % 5) + 1);
-        const brickTypeSpecial = Phaser.Math.Between(0, 10);
+        const brickTypes: BrickType[] = ["blue", "brown", "red", "yellow"];
+        const brickType = Phaser.Math.Between(
+          0,
+          ((this.level - 1) % (brickTypes.length + 1)) + 1
+        );
+        const isSpecial = Phaser.Math.Between(0, 10) === 1;
 
-        let newBrick = null;
+        let newBrick: Brick | null = null;
 
-        if (brickTypeSpecial === 1) {
-          brickType = 10;
-          newBrick = new Brick(this, 0, 0, brickType);
-        } else {
-          switch (brickType) {
-            case 0:
-              newBrick = new Brick(this, 0, 0, brickType);
-              break;
-            case 1:
-              newBrick = new Brick(this, 0, 0, brickType);
-              break;
-            case 2:
-              newBrick = new Brick(this, 0, 0, brickType);
-              break;
-            case 3:
-              newBrick = new Brick(this, 0, 0, brickType);
-              break;
-            default:
-              break;
-          }
+        if (isSpecial) {
+          newBrick = new Brick(this, 0, 0, "white");
+        } else if (brickType < 4) {
+          newBrick = new Brick(this, 0, 0, brickTypes[brickType]);
         }
 
-        if (newBrick && (brickType < 4 || brickTypeSpecial === 1)) {
+        if (newBrick) {
           newBrick.x = 45 + i * 64;
           newBrick.y = 70 + t * 24;
           this.bricks.add(newBrick);
@@ -328,7 +306,7 @@ export default class GameState extends Phaser.Scene {
   private createPowerup(
     x: number,
     y: number,
-    type: number,
+    type: PowerupType,
     velocityX: number,
     velocityY: number
   ): void {
@@ -366,27 +344,28 @@ export default class GameState extends Phaser.Scene {
     };
 
     switch (brick.getBrickType()) {
-      case 0:
+      case "blue":
         this.makeExplosion(x, y, width, height, 100, 80, particles.blue);
         break;
-      case 1:
+      case "brown":
         this.sfxDirt.play();
         this.makeExplosion(x, y, width, height, 40, 50, particles.brown);
         break;
-      case 2:
+      case "red":
         this.makeExplosion(x, y, width, height, 80, 80, particles.red);
-        this.bricks.add(new Brick(this, x, y, 0));
+        this.bricks.add(new Brick(this, x, y, "blue"));
         break;
-      case 3:
+      case "yellow":
         this.sfxExplode.play();
         this.makeExplosion(x, y, width, height, 200, 50, particles.yellow);
         break;
-      case 10:
+      case "white":
         this.makeExplosion(x, y, width, height, 50, 70, particles.white);
-        this.createPowerup(x, y, Phaser.Math.Between(0, 4), 0, 60);
+        this.createPowerup(x, y, randomPowerupType(), 0, 60);
         break;
       default:
-        throw Error("Invalid brick id!");
+        console.warn("Invalid brick id ", brick.getBrickType());
+        break;
     }
 
     this.sfxBounce.play();
@@ -419,7 +398,7 @@ export default class GameState extends Phaser.Scene {
     }
 
     switch (powerup.getType()) {
-      case 0:
+      case "slow":
         this.balls.getChildren().forEach((child) => {
           if (
             child instanceof Ball &&
@@ -433,7 +412,7 @@ export default class GameState extends Phaser.Scene {
         });
         this.sfxSlowDown.play();
         break;
-      case 1:
+      case "fast":
         this.balls.getChildren().forEach((child) => {
           if (
             child instanceof Ball &&
@@ -447,7 +426,7 @@ export default class GameState extends Phaser.Scene {
         });
         this.sfxSpeedUp.play();
         break;
-      case 2:
+      case "multi":
         this.balls.getChildren().forEach((child) => {
           if (
             child instanceof Ball &&
@@ -465,16 +444,17 @@ export default class GameState extends Phaser.Scene {
         });
         this.sfxMultiball.play();
         break;
-      case 3:
+      case "big":
         bar.setBarSize(1);
         this.sfxBigger.play();
         break;
-      case 4:
+      case "small":
         bar.setBarSize(-1);
         this.sfxSmaller.play();
         break;
       default:
-        throw new Error("Invalid powerup id");
+        console.warn("Invalid powerup id ", powerup.getType());
+        break;
     }
 
     // Remove powerup
@@ -494,8 +474,7 @@ export default class GameState extends Phaser.Scene {
 
     // Make a new one
     if (this.balls.getLength() === 0) {
-      this.waitingBall = this.createBall(550 / 2, 300, true);
-      this.waiting = true;
+      this.createBall(550 / 2, 300, true);
 
       // Lives down
       this.removeLife();

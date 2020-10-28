@@ -1,9 +1,33 @@
 import * as Phaser from "phaser";
 
-export default class Powerup extends Phaser.Physics.Arcade.Sprite {
-  public powerupType: number = 0;
+export type PowerupType = "slow" | "fast" | "multi" | "big" | "small";
 
-  public constructor(scene: Phaser.Scene, x: number, y: number, type: number) {
+// Map type to image
+const POWERUP_IMAGES = {
+  big: "img_powerup_bar_big",
+  fast: "img_powerup_ball_fast",
+  multi: "img_powerup_ball_multi",
+  slow: "img_powerup_ball_slow",
+  small: "img_powerup_bar_small",
+};
+
+export default class Powerup extends Phaser.Physics.Arcade.Sprite {
+  // Powerup Type
+  public powerupType: PowerupType;
+
+  /**
+   * Constructor
+   * @param scene Scene to attach to
+   * @param x X position to create at
+   * @param y Y position to create at
+   * @param type Type of powerup
+   */
+  public constructor(
+    scene: Phaser.Scene,
+    x: number,
+    y: number,
+    type: PowerupType
+  ) {
     // Create sprite
     super(scene, x, y, "");
     scene.add.existing(this);
@@ -17,27 +41,14 @@ export default class Powerup extends Phaser.Physics.Arcade.Sprite {
 
     // Select texture
     this.powerupType = type;
-    super.setTexture(this.selectImage(this.powerupType));
+    super.setTexture(POWERUP_IMAGES[this.powerupType]);
   }
 
-  public getType(): number {
+  /**
+   * Get Powerup Type
+   * @returns Powerup type
+   */
+  public getType(): PowerupType {
     return this.powerupType;
-  }
-
-  private selectImage(type: number): string {
-    switch (type) {
-      case 0:
-        return "img_powerup_ball_slow";
-      case 1:
-        return "img_powerup_ball_fast";
-      case 2:
-        return "img_powerup_ball_multi";
-      case 3:
-        return "img_powerup_bar_big";
-      case 4:
-        return "img_powerup_bar_small";
-      default:
-        return "img_powerup_error";
-    }
   }
 }
