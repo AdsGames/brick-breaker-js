@@ -4,29 +4,22 @@ on: pull_request
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-      
-    - name: Use Node.js 12
-      uses: actions/setup-node@v1
-      with:
-        node-version: 12
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Install dependencies
-      run: yarn --frozen-lockfile
-      
-    - name: Build project
-      run: yarn build
-    
-    - name: Zip build
-      run: cd dist && ls && zip -r ./build.zip *
+      - name: Use Node.js 12
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
 
-    - name: Persist build.zip
-      uses: actions/upload-artifact@v1
-      with:
-        name: build-zip
-        path: "./dist/build.zip"
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+
+      - name: Lint project
+        run: yarn lint
+
+      - name: Build project
+        run: yarn build
