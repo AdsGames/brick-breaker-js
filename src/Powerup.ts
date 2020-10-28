@@ -1,7 +1,9 @@
 import * as Phaser from "phaser";
 
-export default class Powerup extends Phaser.GameObjects.Sprite {
-  public constructor(scene, x, y, type) {
+export default class Powerup extends Phaser.Physics.Arcade.Sprite {
+  public powerupType: number = 0;
+
+  public constructor(scene: Phaser.Scene, x: number, y: number, type: number) {
     // Create sprite
     super(scene, x, y, "");
     scene.add.existing(this);
@@ -14,11 +16,15 @@ export default class Powerup extends Phaser.GameObjects.Sprite {
     this.body.onCollide = true;
 
     // Select texture
-    this.type = type;
-    super.setTexture(this.selectImage(this.type));
+    this.powerupType = type;
+    super.setTexture(this.selectImage(this.powerupType));
   }
 
-  private selectImage(type): string {
+  public getType(): number {
+    return this.powerupType;
+  }
+
+  private selectImage(type: number): string {
     switch (type) {
       case 0:
         return "img_powerup_ball_slow";
@@ -33,9 +39,5 @@ export default class Powerup extends Phaser.GameObjects.Sprite {
       default:
         return "img_powerup_error";
     }
-  }
-
-  public getType(): string {
-    return this.type;
   }
 }

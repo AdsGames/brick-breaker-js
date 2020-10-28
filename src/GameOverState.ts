@@ -1,24 +1,28 @@
 import * as Phaser from "phaser";
-import Lava from "./Lava.js";
+import Lava from "./Lava";
+
+const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
+  active: false,
+  key: "GameOverState",
+};
 
 export default class GameOverState extends Phaser.Scene {
-  constructor() {
-    super({
-      active: false,
-      key: "GameOverState",
-    });
+  public lava!: Lava;
+
+  private score: number = 0;
+
+  private level: number = 0;
+
+  public constructor() {
+    super(sceneConfig);
   }
 
-  init({ score, level }) {
+  public init({ score, level }: { score: number; level: number }): void {
     this.score = score;
     this.level = level;
   }
 
-  preload() {
-    // Preload
-  }
-
-  create() {
+  public create(): void {
     // Background
     this.add.image(550 / 2, 400 / 2, "img_background");
 

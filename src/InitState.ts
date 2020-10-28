@@ -1,26 +1,27 @@
 import * as Phaser from "phaser";
 
+import { baseURL } from "./constants/loading";
+
+const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
+  active: false,
+  key: "InitState",
+};
+
 export default class InitState extends Phaser.Scene {
-  constructor() {
-    super({ active: false, key: "InitState" });
+  public constructor() {
+    super(sceneConfig);
   }
 
-  preload() {
+  public preload(): void {
     this.createLoadingScreen();
-
     this.loadSprites();
     this.loadSpriteSheets();
     this.loadAudio();
   }
 
-  createLoadingScreen() {
+  public createLoadingScreen(): void {
     // Loading Screen
-    this.load.baseURL =
-      window.location.toString().replace(/[^/]*$/gu, "") +
-      document
-        .querySelector('script[src$="main.js"]')
-        .getAttribute("src")
-        .replace("main.js", "");
+    this.load.baseURL = baseURL;
 
     // Background
     this.add.image(550 / 2, 400 / 2, "img_load");
@@ -45,19 +46,19 @@ export default class InitState extends Phaser.Scene {
 
     assetText.setOrigin(0.5, 0.5);
 
-    this.load.on("progress", value => {
+    this.load.on("progress", (value: number) => {
       progressBar.clear();
       progressBar.fillStyle(0x000000, 1);
       progressBar.fillRect(217, 272, 106 * value, 6);
     });
 
-    this.load.on("fileprogress", file => {
+    this.load.on("fileprogress", (file: { key: string }) => {
       assetText.setText(`Loading asset: ${file.key}`);
     });
   }
 
   // eslint-disable-next-line max-lines-per-function
-  loadSprites() {
+  public loadSprites(): void {
     // Lava
     this.load.image("img_lava", "assets/img/lava.png");
     this.load.spritesheet("img_lava_particle", "assets/img/lava_bubble.png", {
@@ -120,7 +121,7 @@ export default class InitState extends Phaser.Scene {
     this.load.image("img_powerup_error", "assets/img/powerup/error.png");
   }
 
-  loadSpriteSheets() {
+  public loadSpriteSheets(): void {
     // Brick particles
     this.load.spritesheet(
       "img_particles_blue",
@@ -149,7 +150,7 @@ export default class InitState extends Phaser.Scene {
     );
   }
 
-  loadAudio() {
+  public loadAudio(): void {
     // Music
     this.load.audio("music", "assets/sfx/music.mp3");
 
@@ -167,7 +168,7 @@ export default class InitState extends Phaser.Scene {
   }
 
   // Create
-  create() {
+  public create(): void {
     this.scene.start("MenuState");
   }
 }

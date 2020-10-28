@@ -1,7 +1,9 @@
 import * as Phaser from "phaser";
 
-export default class Brick extends Phaser.GameObjects.Sprite {
-  constructor(scene, x, y, type) {
+export default class Brick extends Phaser.Physics.Arcade.Sprite {
+  public brickType: number = 0;
+
+  public constructor(scene: Phaser.Scene, x: number, y: number, type: number) {
     // Create sprite
     super(scene, x, y, "");
     scene.add.existing(this);
@@ -9,18 +11,25 @@ export default class Brick extends Phaser.GameObjects.Sprite {
     // Physics
     scene.physics.world.enable(this);
 
-    this.body.setCollideWorldBounds(true);
-    this.body.setSize(64, 24);
-    this.body.setOffset(-2, -2);
-    this.body.setImmovable(true);
-    this.body.onCollide = true;
+    // Setup body
+    if (this.body instanceof Phaser.Physics.Arcade.Body) {
+      this.body.setCollideWorldBounds(true);
+      this.body.setSize(64, 24);
+      this.body.setOffset(-2, -2);
+      this.body.setImmovable(true);
+      this.body.onCollide = true;
+    }
 
     // Select texture
-    this.type = type;
-    super.setTexture(this.selectImage(this.type));
+    this.brickType = type;
+    super.setTexture(this.selectImage(this.brickType));
   }
 
-  selectImage(type) {
+  public getBrickType(): number {
+    return this.brickType;
+  }
+
+  private selectImage(type: number): string {
     switch (type) {
       case 0:
         return "img_brick_blue";
@@ -35,9 +44,5 @@ export default class Brick extends Phaser.GameObjects.Sprite {
       default:
         return "img_brick_blue";
     }
-  }
-
-  getType() {
-    return this.type;
   }
 }

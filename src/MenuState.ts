@@ -1,16 +1,26 @@
 import * as Phaser from "phaser";
-import Lava from "./Lava.js";
+import Lava from "./Lava";
+
+const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
+  active: false,
+  key: "MenuState",
+  physics: {
+    arcade: {
+      debug: false,
+      gravity: { y: 0 },
+    },
+    default: "arcade",
+  },
+};
 
 export default class MenuState extends Phaser.Scene {
+  public lava!: Lava;
+
   public constructor() {
-    super({ active: false, key: "MenuState" });
+    super(sceneConfig);
   }
 
-  public preload() {
-    // Preload
-  }
-
-  public create() {
+  public create(): void {
     // Background
     this.add.image(550 / 2, 400 / 2, "img_background");
 
@@ -28,6 +38,12 @@ export default class MenuState extends Phaser.Scene {
     buttonHelp.on("pointerdown", () => this.scene.start("HelpState"), this);
 
     // Lava
-    new Lava(this, 550 / 2, 400 - 10, "img_lava", "img_lava_particle");
+    this.lava = new Lava(
+      this,
+      550 / 2,
+      400 - 10,
+      "img_lava",
+      "img_lava_particle"
+    );
   }
 }

@@ -1,24 +1,33 @@
 import * as Phaser from "phaser";
 
-export default class Lava extends Phaser.GameObjects.Sprite {
-  constructor(scene, x, y, lavaImage, lavaParticle) {
+export default class Lava extends Phaser.Physics.Arcade.Sprite {
+  public lavaEmitter!: Phaser.GameObjects.Particles.ParticleEmitter;
+
+  public constructor(
+    scene: Phaser.Scene,
+    x: number,
+    y: number,
+    lavaImage: string,
+    lavaParticle: string
+  ) {
     // Lava
     super(scene, x, y, lavaImage);
     scene.add.existing(this);
 
-    // Physics
-    if (scene.physics) {
-      scene.physics.world.enable(this);
+    // World physics
+    scene.physics.world.enable(this);
 
+    // Physics
+    if (this.body instanceof Phaser.Physics.Arcade.Body) {
       this.body.setImmovable(true);
-      this.body.setSize(scene.width, 10);
+      this.body.setSize(scene.sys.game.scale.width, 10);
       this.body.setOffset(0, 10);
       this.body.onCollide = true;
     }
 
     // Lava particles
     const particles = scene.add.particles(lavaParticle);
-    this.lavaEmitter = particles.createEmitter();
+    this.lavaEmitter = particles.createEmitter({});
 
     this.lavaEmitter.setSpeed({ max: 100, min: 50 });
     this.lavaEmitter.setGravity(0, 200);

@@ -1,7 +1,16 @@
 import * as Phaser from "phaser";
 
-export default class Ball extends Phaser.GameObjects.Sprite {
-  constructor(scene, x, y, waiting) {
+export default class Ball extends Phaser.Physics.Arcade.Sprite {
+  public ballType: number = 0;
+
+  private waiting: boolean = false;
+
+  public constructor(
+    scene: Phaser.Scene,
+    x: number,
+    y: number,
+    waiting: boolean
+  ) {
     // Create sprite
     super(scene, x, y, "");
     scene.add.existing(this);
@@ -9,45 +18,36 @@ export default class Ball extends Phaser.GameObjects.Sprite {
     // Physics
     scene.physics.world.enable(this);
 
+    // Setup body
     this.body.setSize(10, 10);
     this.body.setOffset(0, 0);
-
     this.body.onCollide = true;
-
-    // Size
-    this.type = 0;
 
     // Waiting
     this.waiting = waiting;
 
     // Select image
-    super.setTexture(this.selectImage(this.type));
+    super.setTexture(this.selectImage(this.ballType));
 
-    // Move ball
-    scene.input.on(
-      "pointerdown",
-      () => {
-        if (this.waiting) {
-          this.body.setVelocity(Phaser.Math.Between(-100, 100), -200);
-          this.waiting = false;
-        }
-      },
-      this
-    );
-
-    scene.input.keyboard.on(
-      "keydown_SPACE",
-      () => {
-        if (this.waiting) {
-          this.body.setVelocity(Phaser.Math.Between(-100, 100), -200);
-          this.waiting = false;
-        }
-      },
-      this
-    );
+    // Setup inputs
+    this.setupInput(scene);
   }
 
-  selectImage(type) {
+  public hitBar(x: number): void {
+    const { body } = this;
+
+    if (body instanceof Phaser.Physics.Arcade.StaticBody) {
+      return;
+    }
+
+    body.setVelocityX(this.body.velocity.x + (this.x - x) * 3);
+  }
+
+  public isWaiting(): boolean {
+    return this.waiting;
+  }
+
+  private selectImage(type: number): string {
     switch (type) {
       case 0:
         return "img_ball";
@@ -58,11 +58,34 @@ export default class Ball extends Phaser.GameObjects.Sprite {
     }
   }
 
-  hitBar(x) {
-    this.body.setVelocityX(this.body.velocity.x + (this.x - x) * 3);
-  }
+  private setupInput(scene: Phaser.Scene): void {
+    const { body } = this;
 
-  isWaiting() {
-    return this.waiting;
+    if (body instanceof Phaser.Physics.Arcade.StaticBody) {
+      return;
+    }
+
+    // Move ball
+    scene.input.on(
+      "pointerdown",
+      () => {
+        if (this.waiting) {
+          body.setVelocity(Phaser.Math.Between(-100, 100), -200);
+          this.waiting = false;
+        }
+      },
+      this
+    );
+
+    scene.input.keyboard.on(
+      "keydown_SPACE",
+      () => {
+        if (this.waiting) {
+          body.setVelocity(Phaser.Math.Between(-100, 100), -200);
+          this.waiting = false;
+        }
+      },
+      this
+    );
   }
 }

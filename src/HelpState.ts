@@ -1,16 +1,19 @@
 import * as Phaser from "phaser";
-import Lava from "./Lava.js";
+import Lava from "./Lava";
+
+const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
+  active: false,
+  key: "HelpState",
+};
 
 export default class HelpState extends Phaser.Scene {
-  constructor() {
-    super({ active: false, key: "HelpState" });
+  public lava!: Lava;
+
+  public constructor() {
+    super(sceneConfig);
   }
 
-  preload() {
-    // Preload
-  }
-
-  create() {
+  public create(): void {
     // Background
     this.add.image(550 / 2, 400 / 2, "img_background");
 
