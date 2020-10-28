@@ -1,16 +1,16 @@
-import Phaser from "phaser";
+import * as Phaser from "phaser";
 import Lava from "./Lava.js";
 
 export default class MenuState extends Phaser.Scene {
-  constructor() {
+  public constructor() {
     super({ active: false, key: "MenuState" });
   }
 
-  preload() {
+  public preload() {
     // Preload
   }
 
-  create() {
+  public create() {
     // Background
     this.add.image(550 / 2, 400 / 2, "img_background");
 
@@ -28,12 +28,6 @@ export default class MenuState extends Phaser.Scene {
     buttonHelp.on("pointerdown", () => this.scene.start("HelpState"), this);
 
     // Lava
-    this.lava = new Lava(
-      this,
-      550 / 2,
-      400 - 10,
-      "img_lava",
-      "img_lava_particle"
-    );
+    new Lava(this, 550 / 2, 400 - 10, "img_lava", "img_lava_particle");
   }
 }

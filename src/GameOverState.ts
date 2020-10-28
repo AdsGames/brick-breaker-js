@@ -1,4 +1,4 @@
-import Phaser from "phaser";
+import * as Phaser from "phaser";
 import Lava from "./Lava.js";
 
 export default class GameOverState extends Phaser.Scene {

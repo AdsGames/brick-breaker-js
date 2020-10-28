@@ -1,7 +1,7 @@
-import Phaser from "phaser";
+import * as Phaser from "phaser";
 
 export default class Powerup extends Phaser.GameObjects.Sprite {
-  constructor(scene, x, y, type) {
+  public constructor(scene, x, y, type) {
     // Create sprite
     super(scene, x, y, "");
     scene.add.existing(this);
@@ -18,7 +18,7 @@ export default class Powerup extends Phaser.GameObjects.Sprite {
     super.setTexture(this.selectImage(this.type));
   }
 
-  selectImage(type) {
+  private selectImage(type): string {
     switch (type) {
       case 0:
         return "img_powerup_ball_slow";
@@ -35,7 +35,7 @@ export default class Powerup extends Phaser.GameObjects.Sprite {
     }
   }
 
-  getType() {
+  public getType(): string {
     return this.type;
   }
 }

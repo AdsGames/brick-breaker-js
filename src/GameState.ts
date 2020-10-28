@@ -1,5 +1,5 @@
 /* eslint-disable max-lines */
-import Phaser from "phaser";
+import * as Phaser from "phaser";
 
 import Brick from "./Brick.js";
 import Lava from "./Lava.js";

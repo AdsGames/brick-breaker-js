@@ -1,4 +1,4 @@
-import Phaser from "phaser";
+import * as Phaser from "phaser";
 
 export default class PreInitState extends Phaser.Scene {
   constructor() {

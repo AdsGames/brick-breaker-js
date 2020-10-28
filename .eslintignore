@@ -1,1 +1,3 @@
 webpack/
+dist/
+.eslintrc.js

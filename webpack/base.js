@@ -1,42 +1,33 @@
-const webpack = require("webpack");
-const path = require("path");
+const { DefinePlugin } = require("webpack");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const ESLintPlugin = require("eslint-webpack-plugin");
 
 module.exports = {
-  mode: "development",
-  devtool: "eval-source-map",
+  entry: {
+    app: "./src/app.ts",
+  },
   module: {
     rules: [
       {
-        enforce: "pre",
-        test: /\.js$/,
+        test: /\.ts$/,
         exclude: /node_modules/,
-        loader: "eslint-loader",
-      },
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        loader: "babel-loader",
-      },
-      {
-        test: [/\.vert$/, /\.frag$/],
-        use: "raw-loader",
-      },
-      {
-        test: /\.(gif|png|jpe?g|svg|xml|mp3)$/i,
-        use: "file-loader",
+        loader: "ts-loader",
       },
     ],
   },
+  resolve: {
+    extensions: [".ts", ".js"],
+  },
   plugins: [
-    new CleanWebpackPlugin(),
-    new webpack.DefinePlugin({
+    new DefinePlugin({
       CANVAS_RENDERER: JSON.stringify(true),
       WEBGL_RENDERER: JSON.stringify(true),
     }),
+    new CopyWebpackPlugin({ patterns: [{ from: "assets", to: "assets" }] }),
     new HtmlWebpackPlugin({
-      template: "index.html",
+      template: "./src/index.ejs",
     }),
+    new ESLintPlugin({ extensions: "ts" }),
   ],
 };

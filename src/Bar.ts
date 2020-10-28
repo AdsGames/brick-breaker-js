@@ -1,4 +1,4 @@
-import Phaser from "phaser";
+import * as Phaser from "phaser";
 
 export default class Bar extends Phaser.GameObjects.Sprite {
   constructor(scene, x, y, size) {
