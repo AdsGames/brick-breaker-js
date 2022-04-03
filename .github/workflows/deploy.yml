@@ -30,7 +30,8 @@ jobs:
         with:
           project-id: brickbreaker
           version: v1.0.0 # ${GITHUB_REF##*/}
-          bucket-access-key: ${{ secrets.LINODE_BUCKET_ACCESS_KEY }}
-          bucket-secret-key: ${{ secrets.LINODE_BUCKET_SECRET_KEY }}
           build-dir: dist
           platform: WEB
+          bucket-access-key: ${{ secrets.LINODE_BUCKET_ACCESS_KEY }}
+          bucket-secret-key: ${{ secrets.LINODE_BUCKET_SECRET_KEY }}
+          api-key: ${{ secrets.ADSGAMES_API_KEY }}
