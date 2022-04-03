@@ -93,11 +93,11 @@ export default class GameState extends Phaser.Scene {
 
     // Text
     this.levelText = this.add.text(458, 12, `level: ${this.level}`, {
-      fill: "#000",
+      color: "#000",
       fontSize: "16px",
     });
     this.livesText = this.add.text(18, 12, `lives: ${this.lives}`, {
-      fill: "#000",
+      color: "#000",
       fontSize: "16px",
     });
   }

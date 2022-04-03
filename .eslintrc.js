@@ -3,12 +3,7 @@ module.exports = {
     browser: true,
     es6: true,
   },
-  extends: [
-    "eslint:all",
-    "plugin:@typescript-eslint/all",
-    "prettier",
-    "prettier/@typescript-eslint",
-  ],
+  extends: ["eslint:all", "plugin:@typescript-eslint/all", "prettier"],
   globals: {
     Atomics: "readonly",
     SharedArrayBuffer: "readonly",

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import * as Phaser from "phaser";
 
 const MOVEMENT_SPEED = 6;
@@ -95,9 +96,9 @@ export default class Bar extends Phaser.Physics.Arcade.Sprite {
    */
   public update(): void {
     // Keyboard controls
-    if (this.arrowKeys.left?.isDown ?? false) {
+    if (this.arrowKeys.left.isDown) {
       this.x -= MOVEMENT_SPEED;
-    } else if (this.arrowKeys.right?.isDown ?? false) {
+    } else if (this.arrowKeys.right.isDown) {
       this.x += MOVEMENT_SPEED;
     }
   }

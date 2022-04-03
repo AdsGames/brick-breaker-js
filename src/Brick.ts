@@ -1,6 +1,6 @@
 import * as Phaser from "phaser";
 
-export type BrickType = "blue" | "brown" | "red" | "yellow" | "white";
+export type BrickType = "blue" | "brown" | "red" | "white" | "yellow";
 
 // Map type to image
 const BRICK_IMAGES: Record<BrickType, string> = {
