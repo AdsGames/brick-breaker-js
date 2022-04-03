@@ -1,0 +1,36 @@
+name: Deploy Game
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Use Node.js 12
+        uses: actions/setup-node@v1
+        with:
+          node-version: 12
+
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+
+      - name: Build project
+        run: |
+          yarn build
+
+      - name: Deploy to A.D.S. Games
+        uses: actions/deploy-to-adsgames@main
+        with:
+          project-id: brickbreaker
+          version: v1.0.0 # ${GITHUB_REF##*/}
+          bucket-access-key: ${{ secrets.LINODE_BUCKET_ACCESS_KEY }}
+          bucket-secret-key: ${{ secrets.LINODE_BUCKET_SECRET_KEY }}
+          build-dir: dist
+          platform: WEB
