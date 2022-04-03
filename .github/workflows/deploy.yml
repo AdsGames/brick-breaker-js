@@ -26,7 +26,7 @@ jobs:
           yarn build
 
       - name: Deploy to A.D.S. Games
-        uses: actions/deploy-to-adsgames@main
+        uses: adsgames/deploy-to-adsgames@main
         with:
           project-id: brickbreaker
           version: v1.0.0 # ${GITHUB_REF##*/}
