@@ -1,9 +1,9 @@
 name: Deploy Game
 
 on:
-  pull_request:
-    branches:
-      - master
+  push:
+    tags:
+      - v*
 
 jobs:
   build:
@@ -30,7 +30,7 @@ jobs:
         uses: adsgames/deploy-to-adsgames@main
         with:
           project-id: brickbreaker
-          version: v1.0.0 # ${GITHUB_REF##*/}
+          version: ${GITHUB_REF##*/}
           build-dir: dist
           platform: WEB
           bucket-access-key: ${{ secrets.LINODE_BUCKET_ACCESS_KEY }}
