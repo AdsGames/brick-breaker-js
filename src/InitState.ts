@@ -36,7 +36,7 @@ export default class InitState extends Phaser.Scene {
 
     const assetText = this.make.text({
       style: {
-        fill: "#000000",
+        color: "#000000",
         font: "12px monospace",
       },
       text: "",

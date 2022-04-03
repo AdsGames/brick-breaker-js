@@ -1,6 +1,6 @@
 import * as Phaser from "phaser";
 
-export type PowerupType = "slow" | "fast" | "multi" | "big" | "small";
+export type PowerupType = "big" | "fast" | "multi" | "slow" | "small";
 
 // Map type to image
 const POWERUP_IMAGES = {
