@@ -26,11 +26,15 @@ jobs:
         run: |
           yarn build
 
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+
       - name: Deploy to A.D.S. Games
         uses: adsgames/deploy-to-adsgames@main
         with:
           project-id: brickbreaker
-          version: ${GITHUB_REF##*/}
+          version: ${{ steps.get_version.outputs.VERSION }}
           build-dir: dist
           platform: WEB
           bucket-access-key: ${{ secrets.LINODE_BUCKET_ACCESS_KEY }}
