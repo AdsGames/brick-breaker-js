@@ -1,4 +1,4 @@
-name: Lint PR
+name: Build Game
 
 on: pull_request
 
@@ -7,20 +7,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Use Node.js 12
-        uses: actions/setup-node@v3
+      - uses: actions/setup-node@v3
         with:
-          node-version: 12
-          cache: "yarn"
+          node-version: 18
+          cache: yarn
 
-      - name: Install dependencies
-        run: yarn --frozen-lockfile
+      - run: yarn --frozen-lockfile
 
-      - name: Lint project
-        run: yarn lint
+      - run: yarn lint
 
-      - name: Build project
-        run: yarn build
+      - run: yarn build
