@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Brick Breaker JS</title>
+
+    <style>
+      canvas {
+        display: block;
+        margin: 0;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+
+        image-rendering: optimizeSpeed;
+        image-rendering: -moz-crisp-edges;
+        image-rendering: -webkit-optimize-contrast;
+        image-rendering: -o-crisp-edges;
+        image-rendering: pixelated;
+        -ms-interpolation-mode: nearest-neighbor;
+      }
+
+      #game-container {
+        color: #ff3c00;
+        height: 98%;
+        width: 98%;
+        margin: auto;
+      }
+
+      .window-controls {
+        margin-bottom: 0.5em;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="game-container"></div>
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>
