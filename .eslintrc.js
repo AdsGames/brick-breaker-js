@@ -24,6 +24,8 @@ module.exports = {
     "sort-imports": 0,
     "one-var": 0,
     "max-statements": 0,
+    "max-lines-per-function": 0,
+    "sort-keys": 0,
 
     "no-console": ["warn", { allow: ["warn"] }],
 
@@ -33,4 +35,11 @@ module.exports = {
     "@typescript-eslint/prefer-readonly-parameter-types": 0,
     "@typescript-eslint/prefer-regexp-exec": 0,
   },
+  ignorePatterns: [
+    "node_modules/",
+    "dist/",
+    "coverage/",
+    "vite.config.ts",
+    ".eslintrc.js",
+  ],
 };

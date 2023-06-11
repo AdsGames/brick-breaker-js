@@ -1,13 +1,11 @@
 /* eslint-disable max-lines */
 import * as Phaser from "phaser";
 
-import type { BrickType } from "./Brick";
-import Brick from "./Brick";
+import Brick, { type BrickType } from "./Brick";
 import Lava from "./Lava";
 import Bar from "./Bar";
 import Ball from "./Ball";
-import type { PowerupType } from "./Powerup";
-import Powerup from "./Powerup";
+import Powerup, { type PowerupType } from "./Powerup";
 
 const randomPowerupType = (): PowerupType => {
   const powerupTypes = ["slow", "fast", "multi", "big", "small"] as const;
