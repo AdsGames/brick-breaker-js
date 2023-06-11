@@ -8,12 +8,7 @@
     <style>
       canvas {
         display: block;
-        margin: 0;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-
+        margin: 0 auto;
         image-rendering: optimizeSpeed;
         image-rendering: -moz-crisp-edges;
         image-rendering: -webkit-optimize-contrast;
@@ -23,14 +18,12 @@
       }
 
       #game-container {
-        color: #ff3c00;
-        height: 98%;
-        width: 98%;
-        margin: auto;
-      }
-
-      .window-controls {
-        margin-bottom: 0.5em;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        position: absolute;
+        background-color: #000;
       }
     </style>
   </head>
