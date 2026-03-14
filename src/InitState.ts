@@ -57,7 +57,6 @@ export default class InitState extends Phaser.Scene {
     });
   }
 
-  // eslint-disable-next-line max-lines-per-function
   public loadSprites(): void {
     // Lava
     this.load.image("img_lava", "assets/img/lava.png");

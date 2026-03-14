@@ -14,11 +14,11 @@ A Brick Breaker game made in Typescript using Phaser 3
 
 Simply run
 
-- `yarn`
-- `yarn start`
+- `npm install`
+- `npm run dev`
 
 ## Building
 
 Simply run
 
-- `yarn build`
+- `npm run build`

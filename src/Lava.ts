@@ -19,24 +19,20 @@ export default class Lava extends Phaser.Physics.Arcade.Sprite {
     }
 
     // Lava particles
-    const particles = scene.add.particles("img_lava_particle");
-    this.lavaEmitter = particles.createEmitter({});
+    this.lavaEmitter = scene.add.particles(0, 380, "img_lava_particle", {
+      speed: { min: 50, max: 100 },
+      gravityX: 0,
+      gravityY: 200,
+      scale: { end: 0.2, start: 1 },
+      angle: { max: 310, min: 230 },
+      lifespan: { max: 500, min: 100 },
+      frequency: 100,
+    });
 
-    this.lavaEmitter.setSpeed({ max: 100, min: 50 });
-    this.lavaEmitter.setGravity(0, 200);
-    this.lavaEmitter.setScale({ end: 0.2, start: 1 });
-    this.lavaEmitter.setAngle({ max: 310, min: 230 });
-
-    this.lavaEmitter.setLifespan({ max: 500, min: 100 });
-    this.lavaEmitter.setFrequency(100);
-    this.lavaEmitter.setPosition(0, 380);
-
-    const emitZoneRect = {
-      quantity: 1,
-      source: new Phaser.Geom.Rectangle(0, 0, 550, 1),
+    this.lavaEmitter.addEmitZone({
       type: "random",
-    };
-
-    this.lavaEmitter.setEmitZone(emitZoneRect);
+      source: new Phaser.Geom.Rectangle(0, 0, 550, 1),
+      quantity: 1,
+    });
   }
 }

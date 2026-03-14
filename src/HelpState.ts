@@ -7,7 +7,7 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   physics: {
     arcade: {
       debug: false,
-      gravity: { y: 0 },
+      gravity: { y: 0, x: 0 },
     },
     default: "arcade",
   },

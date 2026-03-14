@@ -1,4 +1,3 @@
-/* eslint-disable max-lines */
 import * as Phaser from "phaser";
 
 import Brick, { type BrickType } from "./Brick";
@@ -19,22 +18,22 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   physics: {
     arcade: {
       debug: false,
-      gravity: { y: 0 },
+      gravity: { y: 0, x: 0 },
     },
     default: "arcade",
   },
 };
 
 export default class GameState extends Phaser.Scene {
-  private lives: number = 3;
+  private lives = 3;
 
-  private level: number = 1;
+  private level = 1;
 
-  private score: number = 0;
+  private score = 0;
 
   private readonly levelWidth: number = 8;
 
-  private levelHeight: number = 2;
+  private levelHeight = 2;
 
   private levelText!: Phaser.GameObjects.Text;
 
@@ -75,6 +74,11 @@ export default class GameState extends Phaser.Scene {
   }
 
   public create(): void {
+    this.lives = 3;
+    this.level = 1;
+    this.score = 0;
+    this.levelHeight = 2;
+
     this.initUi();
     this.initGameObjects();
     this.initAudio();
@@ -149,13 +153,15 @@ export default class GameState extends Phaser.Scene {
     if (this.level <= 10) {
       if (this.level < 9) this.levelHeight = this.level + 1;
 
-      this.lava.lavaEmitter.setSpeed({
-        max: 100 + this.level * 10,
-        min: 50 + this.level * 10,
-      });
-      this.lava.lavaEmitter.setLifespan({
-        max: 500 + this.level * 50,
-        min: 100 + this.level * 30,
+      this.lava.lavaEmitter.updateConfig({
+        speed: {
+          max: 100 + this.level * 10,
+          min: 50 + this.level * 10,
+        },
+        lifespan: {
+          max: 500 + this.level * 50,
+          min: 100 + this.level * 30,
+        },
       });
     }
 
@@ -204,12 +210,8 @@ export default class GameState extends Phaser.Scene {
   public createCollider(
     group1: Phaser.GameObjects.GameObject | Phaser.GameObjects.Group,
     group2: Phaser.GameObjects.GameObject | Phaser.GameObjects.Group,
-    collider: (
-      obj1: Phaser.GameObjects.GameObject,
-      obj2: Phaser.GameObjects.GameObject
-    ) => void
+    collider: Phaser.Types.Physics.Arcade.ArcadePhysicsCallback
   ): void {
-    // eslint-disable-next-line no-undefined
     this.physics.add.collider(group1, group2, collider, undefined, this);
   }
 
@@ -284,20 +286,23 @@ export default class GameState extends Phaser.Scene {
     particleImage: string
   ): void {
     // Explosion emitter
-    const brickEmitter = this.add.particles(particleImage).createEmitter({});
-    brickEmitter.setFrame([0, 1, 2, 3], true);
-    brickEmitter.setSpeed(speed);
-    brickEmitter.setGravity(0, gravity);
-    brickEmitter.setScale(0.7);
-    brickEmitter.setLifespan({ max: 600, min: 200 });
+    const brickEmitter = this.add.particles(0, 0, particleImage, {
+      scale: 0.7,
+      lifespan: { max: 600, min: 200 },
+      gravityX: 0,
+      gravityY: gravity,
+      speed,
+      frame: {
+        frames: [0, 1, 2, 3],
+        cycle: true,
+      },
+    });
 
-    const emitZoneRect = {
+    brickEmitter.addEmitZone({
       quantity: 1,
       source: new Phaser.Geom.Rectangle(-width / 2, -height / 2, width, height),
       type: "random",
-    };
-
-    brickEmitter.setEmitZone(emitZoneRect);
+    });
     brickEmitter.explode(10, x, y);
   }
 
@@ -326,143 +331,143 @@ export default class GameState extends Phaser.Scene {
     return newBall;
   }
 
-  private collideBrickBall(brick: Phaser.GameObjects.GameObject): void {
-    if (!(brick instanceof Brick)) {
-      return;
-    }
+  private collideBrickBall: Phaser.Types.Physics.Arcade.ArcadePhysicsCallback =
+    (brick): void => {
+      if (!(brick instanceof Brick)) {
+        return;
+      }
 
-    const { x, y, width, height } = brick;
+      const { x, y, width, height } = brick;
 
-    const particles = {
-      blue: "img_particles_blue",
-      brown: "img_particles_brown",
-      red: "img_particles_red",
-      white: "img_particles_white",
-      yellow: "img_particles_yellow",
+      const particles = {
+        blue: "img_particles_blue",
+        brown: "img_particles_brown",
+        red: "img_particles_red",
+        white: "img_particles_white",
+        yellow: "img_particles_yellow",
+      };
+
+      switch (brick.getBrickType()) {
+        case "blue":
+          this.makeExplosion(x, y, width, height, 100, 80, particles.blue);
+          break;
+        case "brown":
+          this.sfxDirt.play();
+          this.makeExplosion(x, y, width, height, 40, 50, particles.brown);
+          break;
+        case "red":
+          this.makeExplosion(x, y, width, height, 80, 80, particles.red);
+          this.bricks.add(new Brick(this, x, y, "blue"));
+          break;
+        case "yellow":
+          this.sfxExplode.play();
+          this.makeExplosion(x, y, width, height, 200, 50, particles.yellow);
+          break;
+        case "white":
+          this.makeExplosion(x, y, width, height, 50, 70, particles.white);
+          this.createPowerup(x, y, randomPowerupType(), 0, 60);
+          break;
+        default:
+          // eslint-disable-next-line no-console
+          console.warn("Invalid brick id ", brick.getBrickType());
+          break;
+      }
+
+      this.sfxBounce.play();
+      this.sfxBreak.play();
+      this.score += 1;
+
+      // Remove brick
+      this.bricks.remove(brick, true, true);
     };
 
-    switch (brick.getBrickType()) {
-      case "blue":
-        this.makeExplosion(x, y, width, height, 100, 80, particles.blue);
-        break;
-      case "brown":
-        this.sfxDirt.play();
-        this.makeExplosion(x, y, width, height, 40, 50, particles.brown);
-        break;
-      case "red":
-        this.makeExplosion(x, y, width, height, 80, 80, particles.red);
-        this.bricks.add(new Brick(this, x, y, "blue"));
-        break;
-      case "yellow":
-        this.sfxExplode.play();
-        this.makeExplosion(x, y, width, height, 200, 50, particles.yellow);
-        break;
-      case "white":
-        this.makeExplosion(x, y, width, height, 50, 70, particles.white);
-        this.createPowerup(x, y, randomPowerupType(), 0, 60);
-        break;
-      default:
-        console.warn("Invalid brick id ", brick.getBrickType());
-        break;
-    }
-
-    this.sfxBounce.play();
-    this.sfxBreak.play();
-    this.score += 1;
-
-    // Remove brick
-    this.bricks.remove(brick, true, true);
-  }
-
-  private collideBallBar(
-    bar: Phaser.GameObjects.GameObject,
-    ball: Phaser.GameObjects.GameObject
-  ): void {
+  private collideBallBar: Phaser.Types.Physics.Arcade.ArcadePhysicsCallback = (
+    bar,
+    ball
+  ): void => {
     if (!(bar instanceof Bar) || !(ball instanceof Ball)) {
       return;
     }
 
     this.sfxBounce.play();
     ball.hitBar(bar.x);
-  }
+  };
 
-  // eslint-disable-next-line max-lines-per-function
-  private collidePowerupBar(
-    bar: Phaser.GameObjects.GameObject,
-    powerup: Phaser.GameObjects.GameObject
-  ): void {
-    if (!(bar instanceof Bar) || !(powerup instanceof Powerup)) {
-      return;
-    }
+  private collidePowerupBar: Phaser.Types.Physics.Arcade.ArcadePhysicsCallback =
+    (bar, powerup): void => {
+      if (!(bar instanceof Bar) || !(powerup instanceof Powerup)) {
+        return;
+      }
 
-    switch (powerup.getType()) {
-      case "slow":
-        this.balls.getChildren().forEach((child) => {
-          if (
-            child instanceof Ball &&
-            child.body instanceof Phaser.Physics.Arcade.Body
-          ) {
-            child.body.setVelocity(
-              child.body.velocity.x * 0.8,
-              child.body.velocity.y * 0.8
-            );
-          }
-        });
-        this.sfxSlowDown.play();
-        break;
-      case "fast":
-        this.balls.getChildren().forEach((child) => {
-          if (
-            child instanceof Ball &&
-            child.body instanceof Phaser.Physics.Arcade.Body
-          ) {
-            child.body.setVelocity(
-              child.body.velocity.x * 1.2,
-              child.body.velocity.y * 1.2
-            );
-          }
-        });
-        this.sfxSpeedUp.play();
-        break;
-      case "multi":
-        this.balls.getChildren().forEach((child) => {
-          if (
-            child instanceof Ball &&
-            child.body instanceof Phaser.Physics.Arcade.Body
-          ) {
-            const newBall = this.createBall(child.x, child.y, false);
-
-            if (newBall.body instanceof Phaser.Physics.Arcade.Body) {
-              newBall.body.setVelocity(
-                -child.body.velocity.x,
-                child.body.velocity.y
+      switch (powerup.getType()) {
+        case "slow":
+          this.balls.getChildren().forEach((child) => {
+            if (
+              child instanceof Ball &&
+              child.body instanceof Phaser.Physics.Arcade.Body
+            ) {
+              child.body.setVelocity(
+                child.body.velocity.x * 0.8,
+                child.body.velocity.y * 0.8
               );
             }
-          }
-        });
-        this.sfxMultiball.play();
-        break;
-      case "big":
-        bar.setBarSize(1);
-        this.sfxBigger.play();
-        break;
-      case "small":
-        bar.setBarSize(-1);
-        this.sfxSmaller.play();
-        break;
-      default:
-        console.warn("Invalid powerup id ", powerup.getType());
-        break;
-    }
+          });
+          this.sfxSlowDown.play();
+          break;
+        case "fast":
+          this.balls.getChildren().forEach((child) => {
+            if (
+              child instanceof Ball &&
+              child.body instanceof Phaser.Physics.Arcade.Body
+            ) {
+              child.body.setVelocity(
+                child.body.velocity.x * 1.2,
+                child.body.velocity.y * 1.2
+              );
+            }
+          });
+          this.sfxSpeedUp.play();
+          break;
+        case "multi":
+          this.balls.getChildren().forEach((child) => {
+            if (
+              child instanceof Ball &&
+              child.body instanceof Phaser.Physics.Arcade.Body
+            ) {
+              const newBall = this.createBall(child.x, child.y, false);
 
-    // Remove powerup
-    this.powerups.remove(powerup, true, true);
-  }
+              if (newBall.body instanceof Phaser.Physics.Arcade.Body) {
+                newBall.body.setVelocity(
+                  -child.body.velocity.x,
+                  child.body.velocity.y
+                );
+              }
+            }
+          });
+          this.sfxMultiball.play();
+          break;
+        case "big":
+          bar.setBarSize(1);
+          this.sfxBigger.play();
+          break;
+        case "small":
+          bar.setBarSize(-1);
+          this.sfxSmaller.play();
+          break;
+        default:
+          // eslint-disable-next-line no-console
+          console.warn("Invalid powerup id ", powerup.getType());
+          break;
+      }
 
-  private collideBallLava(
-    _lava: Phaser.GameObjects.GameObject,
-    ball: Phaser.GameObjects.GameObject
-  ): void {
+      // Remove powerup
+      this.powerups.remove(powerup, true, true);
+    };
+
+  private collideBallLava: Phaser.Types.Physics.Arcade.ArcadePhysicsCallback = (
+    _lava,
+    ball
+  ): void => {
     if (!(ball instanceof Ball)) {
       return;
     }
@@ -477,19 +482,17 @@ export default class GameState extends Phaser.Scene {
       // Lives down
       this.removeLife();
     }
-  }
+  };
 
-  private collidePowerupLava(
-    _lava: Phaser.GameObjects.GameObject,
-    powerup: Phaser.GameObjects.GameObject
-  ): void {
-    if (!(powerup instanceof Powerup)) {
-      return;
-    }
+  private collidePowerupLava: Phaser.Types.Physics.Arcade.ArcadePhysicsCallback =
+    (_lava, powerup): void => {
+      if (!(powerup instanceof Powerup)) {
+        return;
+      }
 
-    // Remove powerup
-    this.powerups.remove(powerup, true, true);
-  }
+      // Remove powerup
+      this.powerups.remove(powerup, true, true);
+    };
 
   private removeLife(): void {
     this.lives -= 1;

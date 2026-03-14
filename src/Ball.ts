@@ -2,7 +2,7 @@ import * as Phaser from "phaser";
 
 export default class Ball extends Phaser.Physics.Arcade.Sprite {
   // If ball is waiting or not
-  private waiting: boolean = false;
+  private waiting = false;
 
   /**
    * Constructor
@@ -25,6 +25,10 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
     scene.physics.world.enable(this);
 
     // Setup body
+    if (!this.body) {
+      throw new Error("Ball body not found");
+    }
+
     this.body.setSize(10, 10);
     this.body.setOffset(0, 0);
     this.body.onCollide = true;
@@ -36,8 +40,21 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
     super.setTexture("img_ball");
 
     // Setup launch ball
-    scene.input.on("pointerdown", this.launchBall.bind(this), this);
-    scene.input.keyboard.on("keydown_SPACE", this.launchBall.bind(this), this);
+    scene.input.on("pointerdown", () => {
+      this.launchBall();
+    });
+
+    scene.input.keyboard?.on("keydown", (event: KeyboardEvent) => {
+      if (event.code === "Space" || event.code === "ArrowUp") {
+        this.launchBall();
+      }
+    });
+
+    scene.input.gamepad?.on("down", (pad: Phaser.Input.Gamepad.Gamepad) => {
+      if (pad.A || pad.B || pad.X || pad.Y) {
+        this.launchBall();
+      }
+    });
   }
 
   /**
@@ -45,13 +62,11 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
    * @param x position hit at
    */
   public hitBar(x: number): void {
-    const { body } = this;
-
-    if (body instanceof Phaser.Physics.Arcade.StaticBody) {
+    if (!(this.body instanceof Phaser.Physics.Arcade.Body)) {
       return;
     }
 
-    body.setVelocityX(this.body.velocity.x + (this.x - x) * 3);
+    this.body.setVelocityX(this.body.velocity.x + (this.x - x) * 3);
   }
 
   /**
@@ -67,10 +82,7 @@ export default class Ball extends Phaser.Physics.Arcade.Sprite {
    * @description Launches ball if in waiting state
    */
   private launchBall(): void {
-    if (
-      this.body instanceof Phaser.Physics.Arcade.StaticBody ||
-      !this.waiting
-    ) {
+    if (!(this.body instanceof Phaser.Physics.Arcade.Body) || !this.waiting) {
       return;
     }
 

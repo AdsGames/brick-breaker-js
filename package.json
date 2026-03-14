@@ -3,6 +3,17 @@
   "version": "1.0.0",
   "description": "Brick Breaker game in Phaser",
   "main": "src/main.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AdsGames/brick-breaker-js.git"
+  },
+  "author": "Allan Legemaate",
+  "license": "MIT",
+  "licenseUrl": "http://www.opensource.org/licenses/mit-license.php",
+  "bugs": {
+    "url": "https://github.com/AdsGames/brick-breaker-js/issues"
+  },
+  "homepage": "https://github.com/AdsGames/brick-breaker-js#readme",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -11,28 +22,20 @@
     "format": "prettier -w .",
     "format:check": "prettier --check ."
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/AdsGames/BrickBreakerJS.git"
-  },
-  "author": "Allan Legemaate",
-  "license": "MIT",
-  "licenseUrl": "http://www.opensource.org/licenses/mit-license.php",
-  "bugs": {
-    "url": "https://github.com/AdsGames/BrickBreakerJS/issues"
-  },
-  "homepage": "https://github.com/AdsGames/BrickBreakerJS#readme",
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.17.0",
-    "@typescript-eslint/parser": "^5.17.0",
-    "eslint": "^8.12.0",
-    "eslint-config-prettier": "^8.5.0",
-    "prettier": "^2.0.5",
-    "typescript": "^5.1.3",
-    "vite": "^4.0.4",
-    "vite-plugin-static-copy": "^0.16.0"
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.0.2",
+    "eslint-config-prettier": "^10.1.8",
+    "prettier": "^3.8.1",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.56.1",
+    "vite": "^8.0.0",
+    "vite-plugin-static-copy": "^3.2.0"
   },
   "dependencies": {
-    "phaser": "3.55.2"
+    "phaser": "3.90.0"
+  },
+  "engines": {
+    "node": "24"
   }
 }

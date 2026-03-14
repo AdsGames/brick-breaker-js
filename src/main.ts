@@ -19,6 +19,12 @@ const config: Phaser.Types.Core.GameConfig = {
     HelpState,
     GameOverState,
   ],
+  input: {
+    keyboard: true,
+    mouse: true,
+    gamepad: true,
+    touch: true,
+  },
   type: Phaser.AUTO,
   width: 550,
   scale: {
