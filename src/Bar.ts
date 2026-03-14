@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import * as Phaser from "phaser";
 
 const MOVEMENT_SPEED = 6;
@@ -58,6 +57,9 @@ export default class Bar extends Phaser.Physics.Arcade.Sprite {
     );
 
     // Keyboard controls
+    if (!scene.input.keyboard) {
+      throw new Error("Scene does not have keyboard input enabled");
+    }
     this.arrowKeys = scene.input.keyboard.createCursorKeys();
   }
 
@@ -72,6 +74,10 @@ export default class Bar extends Phaser.Physics.Arcade.Sprite {
 
     // Get image
     super.setTexture(BAR_IMAGES[this.size]);
+
+    if (!(this.body instanceof Phaser.Physics.Arcade.Body)) {
+      throw new Error("Bar does not have a physics body");
+    }
 
     // Set body size
     switch (this.size) {
@@ -100,6 +106,24 @@ export default class Bar extends Phaser.Physics.Arcade.Sprite {
       this.x -= MOVEMENT_SPEED;
     } else if (this.arrowKeys.right.isDown) {
       this.x += MOVEMENT_SPEED;
+    }
+
+    // Gamepad controls
+    const gamepad = this.scene.input.gamepad?.getPad(0);
+
+    if (gamepad) {
+      // Axis 0 is left stick horizontal
+      const axis = gamepad.axes[0]?.getValue() || 0;
+      if (Math.abs(axis) > 0.1) {
+        this.x += axis * MOVEMENT_SPEED * 1.5;
+      }
+      // D-pad left/right
+      if (gamepad.left) {
+        this.x -= MOVEMENT_SPEED;
+      }
+      if (gamepad.right) {
+        this.x += MOVEMENT_SPEED;
+      }
     }
   }
 }

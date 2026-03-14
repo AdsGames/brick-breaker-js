@@ -35,6 +35,10 @@ export default class Powerup extends Phaser.Physics.Arcade.Sprite {
     // Physics
     scene.physics.world.enable(this);
 
+    if (!(this.body instanceof Phaser.Physics.Arcade.Body)) {
+      throw new Error("Powerup does not have a physics body");
+    }
+
     this.body.setSize(40, 20);
     this.body.setOffset(0, 0);
     this.body.onCollide = true;

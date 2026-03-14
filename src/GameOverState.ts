@@ -7,16 +7,16 @@ const sceneConfig: Phaser.Types.Scenes.SettingsConfig = {
   physics: {
     arcade: {
       debug: false,
-      gravity: { y: 0 },
+      gravity: { y: 0, x: 0 },
     },
     default: "arcade",
   },
 };
 
 export default class GameOverState extends Phaser.Scene {
-  private score: number = 0;
+  private score = 0;
 
-  private level: number = 0;
+  private level = 0;
 
   public constructor() {
     super(sceneConfig);
